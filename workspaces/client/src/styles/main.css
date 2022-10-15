@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  @apply bg-emerald-800 text-white px-3 py-2 font-bold;
+}
+
+.chips > span {
+  margin-left: -12px !important;
+}
+
+.chips > span:first-child {
+  margin-left: 0 !important;
+}
+
+.chips, .chips > span, .chips > span > span {
+  background-color: transparent !important;
+}
+
+.active {
+  background-color:darkslategrey
+}
+
+.active,.inactive {
+  padding: 4px;
+}

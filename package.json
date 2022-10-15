@@ -1,0 +1,18 @@
+{
+  "name": "@anthonynardi/familyinc",
+  "private": true,
+  "version": "1.0.0",
+  "author": "Anthony Nardi",
+  "license": "MIT",
+  "workspaces": {
+    "packages": [
+      "workspaces/*"
+    ]
+  },
+  "scripts": {
+    "start:dev:client": "yarn workspace @familyinc/client start:dev",
+    "start:dev:server": "yarn workspace @familyinc/server start:dev",
+    "start:prod:client": "yarn workspace @familyinc/client start:prod",
+    "start:prod:server": "yarn workspace @familyinc/server start:prod"
+  }
+}
