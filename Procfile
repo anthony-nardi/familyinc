@@ -1,1 +1,1 @@
-web: node workspaces/server/main.ts
+web: npm run start:prod:server && npm run start:prod:client
