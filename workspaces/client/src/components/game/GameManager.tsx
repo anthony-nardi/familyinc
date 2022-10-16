@@ -29,7 +29,7 @@ export default function GameManager() {
       }, undefined, {});
     };
 
-    const onGameMessage: Listener<ServerPayloads[ServerEvents.GameMessage]> = ({color, message}) => {
+    const onGameMessage: Listener<ServerPayloads[ServerEvents.GameMessage]> = ({color, message}: {color: any; message: string}) => {
       showNotification({
         message,
         color,

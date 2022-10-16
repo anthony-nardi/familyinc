@@ -49,5 +49,5 @@ export default function Chip({
       />
     );
   }
-  return images;
+  return <div>{images}</div>;
 }

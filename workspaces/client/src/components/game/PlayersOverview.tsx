@@ -7,6 +7,13 @@ export function PlayersOverview({
   chipsHeld,
   currentPlayer,
   myClientId,
+}: {
+  players: any;
+  scores: any;
+  diamondsHeld: any;
+  chipsHeld: any;
+  currentPlayer: string | undefined;
+  myClientId: string;
 }) {
   return (
     <div className="grid grid-cols-2 gap-1">
