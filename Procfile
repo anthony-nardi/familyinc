@@ -1,1 +1,1 @@
-web: npm run start:prod:server && npm run start:prod:client
+web: npm run start:prod:server
