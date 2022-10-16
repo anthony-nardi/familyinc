@@ -1,4 +1,8 @@
-import { colorToBorderColorClass, colorToTextColorClass, Colors } from "../../constants/colorToCssClass";
+import {
+  colorToBorderColorClass,
+  colorToTextColorClass,
+  Colors,
+} from "../../constants/colorToCssClass";
 import Chip from "./Chip";
 import Diamonds from "./Diamonds";
 
@@ -10,15 +14,18 @@ export default function PlayerOverview({
   isCurrentPlayer,
   you,
 }) {
-  const { userName, isHost, color  } = playerInfo;
+  const { userName, isHost, color } = playerInfo;
 
   const textColor = colorToTextColorClass[color];
-  const borderColor = colorToBorderColorClass[color]
-  
+  const borderColor = colorToBorderColorClass[color];
+
   const isActivePlayerClassName = isCurrentPlayer ? "active" : "inactive";
 
   return (
-    <div className={`${isActivePlayerClassName} ${borderColor} border-2`} key={color}>
+    <div
+      className={`${isActivePlayerClassName} ${borderColor} border-2 mb-1`}
+      key={color}
+    >
       <span className={textColor}>{userName}</span>
       {isHost && " (Host)"}
       {you && " (You)"}

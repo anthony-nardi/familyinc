@@ -21,7 +21,8 @@ export type ServerPayloads = {
     clients: Record<string, {[key: string]: any}>;
     currentPlayer: string | undefined;
     chipsHeld: any;
-    diamondsHeld: any
+    diamondsHeld: any;
+    winner: null | string
   };
 
   [ServerEvents.GameMessage]: {

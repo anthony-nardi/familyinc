@@ -34,6 +34,10 @@ export default function Introduction() {
 
   return (
     <div className="mt-4">
+      <div className="mb-8">
+        <h1>Family Inc.</h1>
+        <h6>Designed by Reiner Knizia</h6>
+      </div>
       <TextInput
         label="Username"
         onChange={(event) => setUserName(event.currentTarget.value)}

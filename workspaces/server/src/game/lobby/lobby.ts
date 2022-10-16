@@ -133,6 +133,7 @@ export class Lobby {
       scores: Object.fromEntries(this.instance.scores),
       chipsHeld: chipsHeldAsObject,
       diamondsHeld: Object.fromEntries(this.instance.diamondsHeld),
+      winner: this.instance.winner
     };
 
     this.dispatchToLobby(ServerEvents.LobbyState, payload);

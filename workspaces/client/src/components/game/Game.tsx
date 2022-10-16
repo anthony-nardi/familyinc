@@ -62,11 +62,23 @@ export default function Game() {
     <div>
       <div className="flex items-center mb-3 justify-center">
         <Badge variant="outline">
-          {!currentLobbyState.hasStarted ? (
+          {!currentLobbyState.hasStarted && (
             <span>Waiting for host to start game.</span>
-          ) : (
+          )}
+
+          {currentLobbyState.hasStarted && !currentLobbyState.hasFinished && (
             <span>Current Player: {currentPlayer}</span>
           )}
+
+          {currentLobbyState.hasStarted &&
+            currentLobbyState.hasFinished &&
+            currentLobbyState.winner && 
+            currentLobbyState.clients[currentLobbyState.winner] && (
+              <span>
+                Winner:{" "}
+                {currentLobbyState.clients[currentLobbyState.winner].userName}
+              </span>
+            )}
         </Badge>
       </div>
 

@@ -35,6 +35,8 @@ export class Instance {
 
   public chips = getInitialChips()
 
+  public winner: string | null = null;
+
   constructor(
     private readonly lobby: Lobby,
   ) {
@@ -195,6 +197,7 @@ export class Instance {
           if (nextScore >= 100) {
             console.log('Win')
             // handle winner
+            this.winner = clientId
             this.hasFinished = true
           } else {
             console.log('Pass turn')
@@ -235,6 +238,7 @@ export class Instance {
     this.scoreForCurrentPlayer()
 
     if ((this.scores.get(this.currentPlayer) || 0) >= 100) {
+      this.winner = this.currentPlayer
       this.triggerFinish()
       return
     }

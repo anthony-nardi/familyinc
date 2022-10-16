@@ -4,7 +4,7 @@ import GameManager from '@components/game/GameManager';
 
 const Page: NextPage = () => {
   return (
-    <div className="container max-w-2xl mt-8">
+    <div className="container mt-4">
       <GameManager/>
     </div>
   );
