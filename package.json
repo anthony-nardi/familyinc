@@ -15,5 +15,8 @@
     "start:prod:client": "yarn workspace @familyinc/client start:prod",
     "start:prod:server": "yarn workspace @familyinc/server start:prod",
     "start": "yarn workspace @familyinc/client start:prod"
+  },
+  "engines": {
+    "node": "16.17.x"
   }
 }
