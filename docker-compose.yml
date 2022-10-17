@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/server/Dockerfile
+    image: "familyinc.azurecr.io/server"
     ports:
       - "3875:3000"
     volumes:
@@ -17,4 +18,5 @@ services:
       dockerfile: ./docker/client/Dockerfile
     ports:
       - "3876:3000"
+    image: familyinc.azurecr.io/client
     restart: unless-stopped

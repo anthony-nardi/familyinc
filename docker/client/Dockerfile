@@ -1,5 +1,6 @@
 FROM node:16.13.0-alpine
 
+RUN mkdir -p /home
 WORKDIR /home
 
 COPY ./package.json ./

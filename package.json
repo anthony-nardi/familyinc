@@ -13,6 +13,7 @@
     "start:dev:client": "yarn workspace @familyinc/client start:dev",
     "start:dev:server": "yarn workspace @familyinc/server start:dev",
     "start:prod:client": "yarn workspace @familyinc/client start:prod",
-    "start:prod:server": "yarn workspace @familyinc/server start:prod"
+    "start:prod:server": "yarn workspace @familyinc/server start:prod",
+    "build": "yarn workspaces foreach run start:prod"
   }
 }
