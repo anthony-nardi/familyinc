@@ -18,7 +18,7 @@ async function bootstrap()
   app.disable('x-powered-by');
   app.setGlobalPrefix('api');
   app.enableShutdownHooks();
-
+  console.log(process.env.PORT)
   await app.listen(process.env.PORT || 3000);
 }
 
