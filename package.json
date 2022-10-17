@@ -15,7 +15,7 @@
     "start:prod:client": "yarn workspace @familyinc/client start:prod",
     "start:prod:server": "yarn workspace @familyinc/server start:prod",
     "build": "yarn workspaces foreach run start:prod",
-    "build:dev": "yarn workspaces foreach run start:dev"
+    "build:dev": "yarn workspaces foreach -pRt run start:dev"
   },
   "packageManager": "yarn@3.2.4"
 }
