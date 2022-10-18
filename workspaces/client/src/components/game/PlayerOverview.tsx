@@ -19,7 +19,7 @@ export default function PlayerOverview({
   chips: any;
   diamonds: number;
   isCurrentPlayer: boolean;
-  you: boolean
+  you: boolean;
 }) {
   const { userName, isHost, color } = playerInfo;
 
@@ -38,9 +38,9 @@ export default function PlayerOverview({
       <span className={textColor}>{userName}</span>
       {isHost && " (Host)"}
       {you && " (You)"}
-      <div className={textColor}>
+      <div className={`${textColor} text-2xl`}>
         Score:
-        {score}
+        {` ${score}`}
       </div>
       <div>
         <Diamonds count={diamonds} />
@@ -49,7 +49,9 @@ export default function PlayerOverview({
         {chips &&
           Object.entries(chips).map(([chipValue, chipCount], index) => {
             // @ts-expect-error any
-            return <Chip chipValue={chipValue} chipCount={chipCount} key={index} />;
+            return (
+              <Chip chipValue={chipValue} chipCount={chipCount} key={index} />
+            );
           })}
       </div>
       <span
