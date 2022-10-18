@@ -48,8 +48,8 @@ export default function PlayerOverview({
       <div className="chips">
         {chips &&
           Object.entries(chips).map(([chipValue, chipCount], index) => {
-            // @ts-expect-error any
             return (
+                // @ts-expect-error any
               <Chip chipValue={chipValue} chipCount={chipCount} key={index} />
             );
           })}
