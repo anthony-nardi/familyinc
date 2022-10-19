@@ -111,22 +111,22 @@ export default function Game() {
       {currentLobbyState.hasStarted &&
         clientId === currentLobbyState.currentPlayer &&
         !currentLobbyState.hasFinished && (
-          <div className="text-center my-2">
-            <button
+          <div className="text-center my-2 flex space-x-4 justify-center">
+          <Button
               className="btn"
               onClick={drawChip}
               disabled={clientId !== currentLobbyState.currentPlayer}
             >
               Draw Chip{" "}
-            </button>
+            </Button>
 
-            <button
+            <Button
               className="btn"
               onClick={passTurn}
               disabled={clientId !== currentLobbyState.currentPlayer}
             >
               Pass Turn{" "}
-            </button>
+            </Button>
           </div>
         )}
       <PlayersOverview
