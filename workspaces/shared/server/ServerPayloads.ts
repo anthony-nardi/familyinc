@@ -4,7 +4,12 @@ export type Color = null | 'green' | 'red' | 'blue' | 'orange' | 'purple' | 'yel
 
 export const colorMap = {
   1: 'green',
-  2: 'red',3: 'blue',4:'orange',5:'purple',6:'yellow',7:'brown'
+  2: 'red', 
+  3: 'blue', 
+  4: 'orange', 
+  5: 'purple', 
+  6: 'yellow', 
+  7: 'brown'
 }
 
 export type ServerPayloads = {
@@ -15,7 +20,7 @@ export type ServerPayloads = {
     playersCount: number;
     scores: Record<string, number>;
     hostId: string;
-    clients: Record<string, {[key: string]: any}>;
+    clients: Record<string, { [key: string]: any }>;
     currentPlayer: string | undefined;
     chipsHeld: any;
     diamondsHeld: any;

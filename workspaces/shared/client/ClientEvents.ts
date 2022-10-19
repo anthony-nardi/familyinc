@@ -10,6 +10,6 @@ export enum ClientEvents
   StartGame = 'client.lobby.start',
 
   // Game
-  DrawChip = 'client.lobby.drawchip',
-  PassTurn = 'client.lobby.passturn'
+  DrawChip = 'client.game.drawchip',
+  PassTurn = 'client.game.passturn'
 }

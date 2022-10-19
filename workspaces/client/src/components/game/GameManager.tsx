@@ -33,7 +33,7 @@ export default function GameManager() {
       showNotification({
         message,
         color,
-        autoClose: 2000,
+        autoClose: 6000,
       });
     };
 
