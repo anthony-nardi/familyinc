@@ -56,21 +56,6 @@ export class Lobby {
     this.dispatchLobbyState();
   }
 
-  public startGame(client: AuthenticatedSocket): void {
-    this.instance.triggerStart(this.clients);
-    this.dispatchLobbyState();
-  }
-
-  public drawChip(client: AuthenticatedSocket): void {
-    this.instance.drawChip(client)
-    this.dispatchLobbyState()
-  }
-
-  public passTurn(client: AuthenticatedSocket): void {
-    this.instance.passTurn(client)
-    this.dispatchLobbyState()
-  }
-
   public removeClient(client: AuthenticatedSocket): void {
     this.clients.delete(client.id);
     client.leave(this.id);
@@ -121,7 +106,6 @@ export class Lobby {
 
     const payload: ServerPayloads[ServerEvents.LobbyState] = {
       lobbyId: this.id,
-      delayBetweenRounds: this.instance.delayBetweenRounds,
       hasStarted: this.instance.hasStarted,
       hasFinished: this.instance.hasFinished,
       currentRound: this.instance.currentRound,

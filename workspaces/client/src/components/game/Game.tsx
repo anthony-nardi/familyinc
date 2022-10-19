@@ -22,7 +22,6 @@ export default function Game() {
     sm.emit({
       event: ClientEvents.LobbyCreate,
       data: {
-        delayBetweenRounds: currentLobbyState.delayBetweenRounds,
         userName: currentLobbyState.clients[clientId].userName,
       },
     });

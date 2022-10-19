@@ -10,7 +10,6 @@ export const colorMap = {
 export type ServerPayloads = {
   [ServerEvents.LobbyState]: {
     lobbyId: string;
-    delayBetweenRounds: number;
     hasStarted: boolean;
     hasFinished: boolean;
     currentRound: number;

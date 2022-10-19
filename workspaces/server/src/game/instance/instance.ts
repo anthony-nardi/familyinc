@@ -27,8 +27,6 @@ export class Instance {
   public chipsHeld: Map<Socket['id'], Map<ChipValues, number>> = new Map()
   public diamondsHeld: Map<Socket['id'], number> = new Map()
 
-  public delayBetweenRounds: number = 2;
-
   public currentPlayer: string
 
   public turnOrder: string[]
@@ -125,6 +123,7 @@ export class Instance {
     }
     // Start game, set current player, determine player order, init game state
     this.initializeGame(clients)
+    this.lobby.dispatchLobbyState();
 
     this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(ServerEvents.GameMessage, {
       color: 'blue',
@@ -214,10 +213,7 @@ export class Instance {
   }
 
   public passTurn(client: AuthenticatedSocket) {
-    if (client.id !== this.currentPlayer) {
-      throw new Error('wtf')
-    }
-
+ 
     // before the turn is passed
     if (this.chipsHeld.get(client.id)) {
       console.log('steal other chips of same value')
@@ -227,12 +223,8 @@ export class Instance {
 
     // pass turn to next player
     const currentTurnIndex = this.turnOrder.indexOf(this.currentPlayer)
-    console.log(`turn order: ${this.turnOrder}`)
-    console.log(`currentTurnIndex: ${currentTurnIndex}`)
     const nextIndex = this.turnOrder.length === currentTurnIndex + 1 ? 0 : currentTurnIndex + 1
-    console.log(`Next index: ${nextIndex}`)
     this.currentPlayer = this.turnOrder[nextIndex]
-    console.log(`current player: ${this.currentPlayer}`)
 
     // score for the current player
     this.scoreForCurrentPlayer()
@@ -262,16 +254,5 @@ export class Instance {
 
     this.scores.set(this.currentPlayer, currentScore + scoreToAdd)
   }
-
-  private transitionToNextRound(): void {
-    this.isSuspended = true;
-
-    setTimeout(() => {
-      this.isSuspended = false;
-
-      this.lobby.dispatchLobbyState();
-    }, SECOND * this.delayBetweenRounds);
-  }
-
 
 }

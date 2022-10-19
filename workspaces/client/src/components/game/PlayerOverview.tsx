@@ -39,8 +39,7 @@ export default function PlayerOverview({
       {isHost && " (Host)"}
       {you && " (You)"}
       <div className={`${textColor} text-2xl`}>
-        Score:
-        {` ${score}`}
+        {typeof score === 'number' && `Score: ${score}`}
       </div>
       <div>
         <Diamonds count={diamonds} />

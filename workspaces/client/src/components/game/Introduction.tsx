@@ -24,7 +24,6 @@ export default function Introduction() {
     sm.emit({
       event: ClientEvents.LobbyCreate,
       data: {
-        delayBetweenRounds: 60,
         userName,
       },
     });

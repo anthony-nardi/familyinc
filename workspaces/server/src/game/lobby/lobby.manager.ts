@@ -22,14 +22,9 @@ export class LobbyManager {
     client.data.lobby?.removeClient(client);
   }
 
-  public createLobby(delayBetweenRounds: number): Lobby {
-
-
+  public createLobby(): Lobby {
     const lobby = new Lobby(this.server, this.logger);
-    lobby.instance.delayBetweenRounds = delayBetweenRounds;
-
     this.lobbies.set(lobby.id, lobby);
-
     return lobby;
   }
 
@@ -44,38 +39,7 @@ export class LobbyManager {
       throw new ServerException(SocketExceptions.LobbyError, 'Lobby already full');
     }
 
-
     lobby.addClient(client, userName);
-  }
-
-  public startGame(client: AuthenticatedSocket) {
-    if (client.data.isHost && client.data.lobby) {
-      const lobby = this.lobbies.get(client.data.lobby.id)
-      if (lobby && lobby.clients && lobby.clients.size > 1 && client.id === lobby.instance.hostId) {
-        lobby.startGame(client)
-      }
-    }
-  }
-
-  public passTurn(client: AuthenticatedSocket) {
-    if (client.data.lobby) {
-      const lobby = this.lobbies.get(client.data.lobby.id)
-      if (lobby && client.id === lobby.instance.currentPlayer) {
-        lobby.passTurn(client)
-      }
-    }
-
-  }
-
-  public drawChip(client: AuthenticatedSocket) {
-    if (client.data.lobby) {
-
-      const lobby = this.lobbies.get(client.data.lobby.id)
-      if (lobby && client.id === lobby.instance.currentPlayer) {
-        lobby.drawChip(client)
-      }
-    }
-
   }
 
   // Periodically clean up lobbies
