@@ -1,12 +1,10 @@
 import { Lobby } from '@app/game/lobby/lobby';
-import { ServerException } from '@app/game/server.exception';
-import { SocketExceptions } from '@shared/server/SocketExceptions';
 import { AuthenticatedSocket } from '@app/game/types';
-import { SECOND } from '@app/game/constants';
 import { Socket } from 'socket.io';
 import { ServerPayloads } from '@shared/server/ServerPayloads';
 import { ServerEvents } from '@shared/server/ServerEvents';
 import { getInitialChips } from '@app/game/instance/utils';
+
 const getRandomItemFromMap = (iterable) => iterable.get([...iterable.keys()][Math.floor(Math.random() * iterable.size)])
 const getRandomItemFromArray = (items) => items[Math.floor(Math.random() * items.length)];
 
@@ -14,25 +12,14 @@ type ChipValues = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10'
 
 export class Instance {
   public hasStarted: boolean = false;
-
   public hasFinished: boolean = false;
-
-  public isSuspended: boolean = false;
-
-  public currentRound: number = 1;
-
   public hostId: string;
-
   public scores: Map<Socket['id'], number> = new Map();
   public chipsHeld: Map<Socket['id'], Map<ChipValues, number>> = new Map()
   public diamondsHeld: Map<Socket['id'], number> = new Map()
-
   public currentPlayer: string
-
   public turnOrder: string[]
-
   public chips = getInitialChips()
-
   public winner: string | null = null;
 
   constructor(
@@ -84,8 +71,6 @@ export class Instance {
     this.currentPlayer = this.getRandomClient().id
     this.turnOrder = clientIds
 
-    console.log(`turn order: ${this.turnOrder}`)
-
     clientIds.forEach(clientId => {
       this.scores.set(clientId, 0)
       this.diamondsHeld.set(clientId, 0)
@@ -96,17 +81,19 @@ export class Instance {
   }
 
   private stealChips() {
+    const currentPlayersHeldChips = this.chipsHeld.get(this.currentPlayer)
+
+    if (!currentPlayersHeldChips) {
+      return;
+    }
+
     this.chipsHeld.forEach((playerChips, clientId) => {
       if (clientId !== this.currentPlayer) {
         playerChips.forEach((amount, chipValue) => {
-          console.log(`Player has ${amount} of ${chipValue} chips.`)
-
-          const currentPlayersChipCountForChipValue = this.chipsHeld.get(this.currentPlayer)?.get(chipValue)
-
-          console.log(`currentPlayersChipCountForChipValue: ${currentPlayersChipCountForChipValue}`)
+          const currentPlayersChipCountForChipValue = currentPlayersHeldChips.get(chipValue)
           if (currentPlayersChipCountForChipValue) {
-            this.chipsHeld.get(this.currentPlayer)?.set(chipValue, currentPlayersChipCountForChipValue + amount)
-            this.chipsHeld.get(clientId)?.set(chipValue, 0)
+            currentPlayersHeldChips.set(chipValue, currentPlayersChipCountForChipValue + amount)
+            playerChips.set(chipValue, 0)
           }
         })
       }
@@ -148,15 +135,10 @@ export class Instance {
     const clientId = client.id
     const chipDrawn: ChipValues = getRandomItemFromArray(this.chips)
 
-    console.log(`Chip Drawn: ${chipDrawn}`)
-
     this.chips.splice(this.chips.indexOf(chipDrawn), 1)
-
-    console.log(`Chips left: ${this.chips.length}`)
 
     if (this.chips.length === 0) {
       this.chips = getInitialChips()
-      console.log('we actually ran out of chips..')
     }
 
     const playChipsHeld = this.chipsHeld.get(clientId)
@@ -170,13 +152,11 @@ export class Instance {
       this.chipsHeld.set(clientId, this.getInitialPlayerHeldChips())
 
       const hasBustedWithoutReceivingDiamond = this.isPlayerHoldingMoreThan2Chips(playChipsHeld)
+
       if (hasBustedWithoutReceivingDiamond) {
-        console.log('hasBustedWithoutReceivingDiamond')
         // more than 3 chips - just pass turn
         this.passTurn(client)
-        return;
       } else {
-        console.log('Less than 3 chips currently held...')
         // less than 3 chips - receive diamond or score 50
         const currentDiamondsHeld = this.diamondsHeld.get(clientId) || 0
         const nextDiamondsHeld = currentDiamondsHeld + 1
@@ -187,23 +167,18 @@ export class Instance {
         }
 
         if (nextDiamondsHeld === 3) {
-          console.log('Player has 3 diamonds!')
           this.diamondsHeld.set(clientId, 0)
           const currentPlayerScore = this.scores.get(clientId) || 0
           const nextScore = currentPlayerScore + 50;
           this.scores.set(clientId, nextScore);
 
           if (nextScore >= 100) {
-            console.log('Win')
-            // handle winner
             this.winner = clientId
-            this.hasFinished = true
+            this.triggerFinish()
           } else {
-            console.log('Pass turn')
-            // game continues
             this.passTurn(client)
           }
-        } 
+        }
       }
     }
 
@@ -213,13 +188,11 @@ export class Instance {
   }
 
   public passTurn(client: AuthenticatedSocket) {
- 
+
     // before the turn is passed
     if (this.chipsHeld.get(client.id)) {
-      console.log('steal other chips of same value')
       this.stealChips()
     }
-
 
     // pass turn to next player
     const currentTurnIndex = this.turnOrder.indexOf(this.currentPlayer)
@@ -229,14 +202,12 @@ export class Instance {
     // score for the current player
     this.scoreForCurrentPlayer()
 
+    this.chipsHeld.set(this.currentPlayer, this.getInitialPlayerHeldChips())
+
     if ((this.scores.get(this.currentPlayer) || 0) >= 100) {
       this.winner = this.currentPlayer
       this.triggerFinish()
-      return
     }
-
-    // no winner - clear chips
-    this.chipsHeld.set(this.currentPlayer, this.getInitialPlayerHeldChips())
 
     this.lobby.dispatchLobbyState();
   }
@@ -254,5 +225,4 @@ export class Instance {
 
     this.scores.set(this.currentPlayer, currentScore + scoreToAdd)
   }
-
 }

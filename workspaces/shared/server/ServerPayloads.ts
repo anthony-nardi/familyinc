@@ -12,9 +12,7 @@ export type ServerPayloads = {
     lobbyId: string;
     hasStarted: boolean;
     hasFinished: boolean;
-    currentRound: number;
     playersCount: number;
-    isSuspended: boolean;
     scores: Record<string, number>;
     hostId: string;
     clients: Record<string, {[key: string]: any}>;

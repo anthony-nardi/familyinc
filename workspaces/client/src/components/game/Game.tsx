@@ -3,7 +3,6 @@ import useSocketManager from "@hooks/useSocketManager";
 import { useRecoilValue } from "recoil";
 import { CurrentLobbyState } from "@components/game/states";
 import { Badge, LoadingOverlay, Overlay, Button } from "@mantine/core";
-import { MantineColor } from "@mantine/styles";
 import { showNotification } from "@mantine/notifications";
 import { emitEvent } from "@utils/analytics";
 import { PlayersOverview } from "./PlayersOverview";
@@ -71,7 +70,7 @@ export default function Game() {
 
           {currentLobbyState.hasStarted &&
             currentLobbyState.hasFinished &&
-            currentLobbyState.winner && 
+            currentLobbyState.winner &&
             currentLobbyState.clients[currentLobbyState.winner] && (
               <span>
                 Winner:{" "}
@@ -81,19 +80,11 @@ export default function Game() {
         </Badge>
       </div>
 
-      {currentLobbyState.isSuspended && (
-        <div className="text-center text-lg">lobby suspended... </div>
-      )}
-
       <div className="grid grid-cols-7 gap-4 relative select-none">
         {currentLobbyState.hasFinished && (
           <Overlay opacity={0.6} color="#000" blur={2} zIndex={5} />
         )}
-        <LoadingOverlay
-          visible={
-            !currentLobbyState.hasStarted || currentLobbyState.isSuspended
-          }
-        />
+        <LoadingOverlay visible={!currentLobbyState.hasStarted} />
       </div>
 
       {currentLobbyState.hasFinished && isHost && (
