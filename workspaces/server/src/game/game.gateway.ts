@@ -29,7 +29,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   private isHost(client: AuthenticatedSocket): boolean {
-    return client.data.isHost
+    return client.data.isHost && client.id === client.data.lobby?.instance.hostId
   }
 
   afterInit(server: Server): any {
@@ -85,7 +85,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (!lobby) {
       throw new ServerException(SocketExceptions.LobbyError, 'You are not in a lobby');
     }
-    if (!this.isHost(client) || client.id !== lobby.instance.hostId) {
+    if (!this.isHost(client)) {
       throw new ServerException(SocketExceptions.GameError, 'Only the host can start the game.')
     }
     if (lobby.clients.size <= 1) {

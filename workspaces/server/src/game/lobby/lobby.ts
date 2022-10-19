@@ -26,6 +26,15 @@ export class Lobby {
 
     this.logger.log('Adding client')
 
+    if (this.instance.hasStarted) {
+      this.logger.log('Game has already started. We cant add a new player in the middle of a game.')
+      client.emit(ServerEvents.GameMessage, {
+        color: 'red',
+        message: 'The game has already started.',
+      })
+      return
+    }
+
     this.clients.set(client.id, client);
     client.join(this.id);
     client.data.lobby = this;
@@ -66,14 +75,25 @@ export class Lobby {
 
       // If player leave then the game isn't worth to play anymore
       this.instance.triggerFinish();
-    } else if (client.data.isHost && this.clients.size > 1) {
+    } 
+    
+    if (client.data.isHost && this.clients.size > 1) {
       const nextClientId: Socket['id'] = this.clients.keys().next().value
       const clientToPromote = this.clients.get(nextClientId)
       console.log('Promoting another player to be host', nextClientId)
       if (clientToPromote) {
         clientToPromote.data.isHost = true
         this.instance.setHostId(nextClientId)
+      }
+    }
 
+    if (this.instance.hasStarted) {
+      const leavingPlayerTurnOrderIndex = this.instance.turnOrder.indexOf(client.id)
+      if (leavingPlayerTurnOrderIndex > -1) {
+        this.instance.turnOrder.splice(leavingPlayerTurnOrderIndex, 1)
+      }
+      if (this.instance.currentPlayer === client.id) {
+        this.instance.passTurn(client)
       }
     }
 

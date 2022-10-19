@@ -140,7 +140,7 @@ export class Instance {
 
     this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(ServerEvents.GameMessage, {
       color: 'blue',
-      message: 'Game finished !',
+      message: 'Game finished!',
     });
   }
 
