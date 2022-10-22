@@ -100,7 +100,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           lobby,
           color: 'red',
           userName: `BOT ${i}`,
-          isHost: false
+          isHost: false,
+          isBot: true
           }
       } as AuthenticatedSocket, `BOT ${i}`);
 

@@ -8,7 +8,8 @@ export type AuthenticatedSocket = Socket & {
     lobby: null | Lobby;
     color: Color,
     userName: string,
-    isHost: true | false
+    isHost: true | false,
+    isBot: false | true
   };
 
   emit: <T>(ev: ServerEvents, data: T) => boolean;

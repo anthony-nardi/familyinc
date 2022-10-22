@@ -29,6 +29,8 @@ export class Lobby {
       return
     }
 
+    this.logger.log(`Setting ${client.id} client`)
+
     this.clients.set(client.id, client);
     client.join && client.join(this.id);
     client.data.lobby = this;

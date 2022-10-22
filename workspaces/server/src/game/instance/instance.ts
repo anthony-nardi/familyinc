@@ -78,7 +78,35 @@ export class Instance {
       this.chipsHeld.set(clientId, newSetOfChips)
     })
 
+    // this.lobby.logger.log(JSON.stringify(clients.get(this.currentPlayer)))
+    // this.lobby.logger.log(clients.get(this.currentPlayer))
+    
+    const currentPlayerClient = clients.get(this.currentPlayer)
+    if (currentPlayerClient && currentPlayerClient.data.isBot) {
+      this.makeBotTurn(currentPlayerClient)
+    }
+
   }
+
+  private makeBotTurn(client: AuthenticatedSocket) {
+    const playChipsHeld = this.chipsHeld.get(client.id)
+    if (this.isPlayerHoldingMoreThan2Chips(playChipsHeld)) {
+      this.lobby.logger.log('pass')
+
+      this.passTurn(client)
+    } else {
+      this.lobby.logger.log('draw chip')
+
+      this.drawChip(client)
+    }
+
+    if (this.currentPlayer === client.id && !this.hasFinished) {
+      setTimeout(() => {
+        this.lobby.logger.log('make another turn')
+        this.makeBotTurn(client)
+      }, 3000)
+    }
+  } 
 
   private stealChips() {
     const currentPlayersHeldChips = this.chipsHeld.get(this.currentPlayer)
@@ -207,6 +235,12 @@ export class Instance {
     if ((this.scores.get(this.currentPlayer) || 0) >= 100) {
       this.winner = this.currentPlayer
       this.triggerFinish()
+    }
+
+
+    const currentPlayerClient = this.lobby.clients.get(this.currentPlayer)
+    if (currentPlayerClient && currentPlayerClient.data.isBot) {
+      this.makeBotTurn(currentPlayerClient)
     }
 
     this.lobby.dispatchLobbyState();
