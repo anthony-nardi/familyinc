@@ -138,12 +138,12 @@ export class Instance {
     this.chips.splice(this.chips.indexOf(chipDrawn), 1)
 
     if (this.chips.length === 0) {
-      this.chips = getInitialChips()
+      this.chips = getInitialChips()  // TODO: Subtract from this the currently held chips.
     }
 
     const playChipsHeld = this.chipsHeld.get(clientId)
 
-    const currentNumberOfHeldChipsByType = playChipsHeld?.get(chipDrawn) || 0
+    const currentNumberOfHeldChipsByType = playChipsHeld?.get(chipDrawn) 
 
     if (currentNumberOfHeldChipsByType === 0) {
       playChipsHeld?.set(chipDrawn, 1)
