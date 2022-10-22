@@ -30,7 +30,7 @@ export class Lobby {
     }
 
     this.clients.set(client.id, client);
-    client.join(this.id);
+    client.join && client.join(this.id);
     client.data.lobby = this;
     client.data.color = colorMap[this.clients.size];
     client.data.userName = userName
