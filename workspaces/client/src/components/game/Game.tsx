@@ -128,7 +128,11 @@ export default function Game() {
             label="Add bots"
             data={botOptions}
             value={selectedBotValue} 
-            onChange={setBotValue}
+            onChange={(val) => {
+              if (typeof val === 'string') {
+                setBotValue(val)
+              }
+            }}
           />
         )
       }
