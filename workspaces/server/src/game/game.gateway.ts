@@ -80,7 +80,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage(ClientEvents.StartGame)
-  onStartGame(client: AuthenticatedSocket): void {
+  onStartGame(client: AuthenticatedSocket, data: {bots: number}): void {
     const lobby = client.data.lobby
     if (!lobby) {
       throw new ServerException(SocketExceptions.LobbyError, 'You are not in a lobby');
@@ -88,9 +88,26 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (!this.isHost(client)) {
       throw new ServerException(SocketExceptions.GameError, 'Only the host can start the game.')
     }
-    if (lobby.clients.size <= 1) {
+    if (lobby.clients.size <= 1 && !data.bots) {
       throw new ServerException(SocketExceptions.GameError, 'The game needs more than 1 player to start.')
     }
+
+    if (data.bots) {
+      for (let i = 0; i < data.bots; i++) {
+        this.lobbyManager.joinLobby(lobby.id, {
+          id: `bot_${i}`,
+          data: {
+          lobby,
+          color: 'red',
+          userName: `BOT ${i}`,
+          isHost: false,
+          isBot: true
+          }
+      } as AuthenticatedSocket, `BOT ${i}`);
+
+      }
+    }
+    
     lobby.instance.triggerStart(lobby.clients)
   }
 
