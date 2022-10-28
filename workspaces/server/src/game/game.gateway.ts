@@ -17,6 +17,22 @@ import { SocketExceptions } from '@shared/server/SocketExceptions';
 import { ServerPayloads } from '@shared/server/ServerPayloads';
 import { LobbyCreateDto, LobbyJoinDto, } from '@app/game/dtos';
 import { WsValidationPipe } from '@app/websocket/ws.validation-pipe';
+import { SimpleBot } from '@app/game/bots/SimpleBot';
+import { CarefulBot } from '@app/game/bots/CarefulBot';
+import { RiskyBot } from '@app/game/bots/RiskyBot';
+import { RuthlessBot } from '@app/game/bots/RuthlessBot';
+import { StealyBot } from '@app/game/bots/StealyBot';
+import { RandomBot } from '@app/game/bots/RandomBot';
+
+const botGenerationOrder = [
+  SimpleBot,
+  CarefulBot,
+  RiskyBot,
+  RuthlessBot,
+  StealyBot,
+  RandomBot
+]
+
 
 @UsePipes(new WsValidationPipe())
 @WebSocketGateway()
@@ -80,7 +96,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage(ClientEvents.StartGame)
-  onStartGame(client: AuthenticatedSocket, data: {bots: number}): void {
+  onStartGame(client: AuthenticatedSocket, data: { bots: number }): void {
     const lobby = client.data.lobby
     if (!lobby) {
       throw new ServerException(SocketExceptions.LobbyError, 'You are not in a lobby');
@@ -94,20 +110,22 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     if (data.bots) {
       for (let i = 0; i < data.bots; i++) {
-        this.lobbyManager.joinLobby(lobby.id, {
+        const BotType = botGenerationOrder[i]
+        const bot = new BotType({
           id: `bot_${i}`,
           data: {
-          lobby,
-          color: 'red',
-          userName: `BOT ${i}`,
-          isHost: false,
-          isBot: true
+            lobby,
+            color: 'red',
+            isHost: false,
+            isBot: true
           }
-      } as AuthenticatedSocket, `BOT ${i}`);
+        }) 
+
+        this.lobbyManager.joinLobby(lobby.id, bot, bot.data.userName);
 
       }
     }
-    
+
     lobby.instance.triggerStart(lobby.clients)
   }
 

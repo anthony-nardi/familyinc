@@ -7,6 +7,7 @@ import { LOBBY_MAX_LIFETIME } from '@app/game/constants';
 import { ServerEvents } from '@shared/server/ServerEvents';
 import { ServerPayloads } from '@shared/server/ServerPayloads';
 import { Cron } from '@nestjs/schedule';
+import { Bot } from '@app/game/bots/bot';
 
 export class LobbyManager {
   public server: Server;
@@ -28,7 +29,7 @@ export class LobbyManager {
     return lobby;
   }
 
-  public joinLobby(lobbyId: string, client: AuthenticatedSocket, userName: string): void {
+  public joinLobby(lobbyId: string, client: AuthenticatedSocket | Bot, userName: string): void {
     const lobby = this.lobbies.get(lobbyId);
 
     if (!lobby) {

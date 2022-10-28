@@ -1,22 +1,22 @@
 import { Lobby } from '@app/game/lobby/lobby';
-import { AuthenticatedSocket } from '@app/game/types';
+import { AuthenticatedSocket,ChipValues, ChipsHeld,DiamondsHeld,Scores } from '@app/game/types';
 import { Socket } from 'socket.io';
 import { ServerPayloads } from '@shared/server/ServerPayloads';
 import { ServerEvents } from '@shared/server/ServerEvents';
-import { getInitialChips } from '@app/game/instance/utils';
+import { getInitialChips, isPlayerHoldingMoreThan2Chips } from '@app/game/instance/utils';
+import {Bot} from '@app/game/bots/Bot'
 
 const getRandomItemFromMap = (iterable) => iterable.get([...iterable.keys()][Math.floor(Math.random() * iterable.size)])
 const getRandomItemFromArray = (items) => items[Math.floor(Math.random() * items.length)];
 
-type ChipValues = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10'
 
 export class Instance {
   public hasStarted: boolean = false;
   public hasFinished: boolean = false;
   public hostId: string;
-  public scores: Map<Socket['id'], number> = new Map();
-  public chipsHeld: Map<Socket['id'], Map<ChipValues, number>> = new Map()
-  public diamondsHeld: Map<Socket['id'], number> = new Map()
+  public scores: Scores = new Map();
+  public chipsHeld: ChipsHeld = new Map()
+  public diamondsHeld: DiamondsHeld = new Map()
   public currentPlayer: string
   public turnOrder: string[]
   public chips = getInitialChips()
@@ -27,21 +27,6 @@ export class Instance {
   ) {
   }
 
-  private isPlayerHoldingMoreThan2Chips(chipsHeld: Map<ChipValues, number> | undefined) {
-    let amountHeld = 0
-
-    if (!chipsHeld) {
-      return false
-    }
-
-    chipsHeld.forEach(chips => {
-      if (typeof chips === 'number' && chips > 0) {
-        amountHeld++
-      }
-    })
-
-    return amountHeld >= 3
-  }
 
   private getInitialPlayerHeldChips() {
     return new Map(
@@ -64,7 +49,7 @@ export class Instance {
     return getRandomItemFromMap(this.lobby.clients)
   }
 
-  private initializeGame(clients: Map<Socket['id'], AuthenticatedSocket>): void {
+  private initializeGame(clients: Map<Socket['id'], AuthenticatedSocket | Bot> | Map<Socket['id'], Bot>): void {
     const clientIds = Array.from(clients.keys());
 
     this.hasStarted = true;
@@ -83,14 +68,16 @@ export class Instance {
 
     const currentPlayerClient = clients.get(this.currentPlayer)
     if (currentPlayerClient && currentPlayerClient.data.isBot) {
-      this.makeBotTurn(currentPlayerClient)
+      this.makeBotTurn(currentPlayerClient as Bot)
     }
 
   }
 
-  private makeBotTurn(client: AuthenticatedSocket) {
-    const playChipsHeld = this.chipsHeld.get(client.id)
-    if (this.isPlayerHoldingMoreThan2Chips(playChipsHeld)) {
+  private makeBotTurn(client:  Bot) {
+    
+    const shouldBotPass = client.shouldPassTurn(this.chipsHeld, this.diamondsHeld, this.scores)
+    this.lobby.logger.log(`${client.data.userName} decides to ${shouldBotPass ? 'pass': 'draw'}.`)
+    if (shouldBotPass) {
       this.passTurn(client)
     } else {
       this.drawChip(client)
@@ -99,7 +86,7 @@ export class Instance {
     if (this.currentPlayer === client.id && !this.hasFinished) {
       setTimeout(() => {
         this.makeBotTurn(client)
-      }, 2500)
+      }, 2000)
     }
   }
 
@@ -127,7 +114,7 @@ export class Instance {
     this.hostId = hostId
   }
 
-  public triggerStart(clients: Map<Socket['id'], AuthenticatedSocket>): void {
+  public triggerStart(clients: Map<Socket['id'], AuthenticatedSocket | Bot>): void {
     if (this.hasStarted) {
       return;
     }
@@ -154,7 +141,7 @@ export class Instance {
     });
   }
 
-  public drawChip(client: AuthenticatedSocket) {
+  public drawChip(client: AuthenticatedSocket | Bot) {
     const clientId = client.id
     const chipDrawn: ChipValues = getRandomItemFromArray(this.chips)
 
@@ -173,8 +160,12 @@ export class Instance {
     } else {
       // loses currently held chips
       this.chipsHeld.set(clientId, this.getInitialPlayerHeldChips())
-
-      const hasBustedWithoutReceivingDiamond = this.isPlayerHoldingMoreThan2Chips(playChipsHeld)
+      let hasBustedWithoutReceivingDiamond = false
+      
+      if (playChipsHeld) {
+        hasBustedWithoutReceivingDiamond = isPlayerHoldingMoreThan2Chips(playChipsHeld)
+        }
+      
 
       if (hasBustedWithoutReceivingDiamond) {
         // more than 3 chips - just pass turn
@@ -210,7 +201,7 @@ export class Instance {
     return chipDrawn
   }
 
-  public passTurn(client: AuthenticatedSocket) {
+  public passTurn(client: AuthenticatedSocket | Bot) {
 
     // before the turn is passed
     if (this.chipsHeld.get(client.id)) {
@@ -234,7 +225,7 @@ export class Instance {
 
 
     const currentPlayerClient = this.lobby.clients.get(this.currentPlayer)
-    if (currentPlayerClient && currentPlayerClient.data.isBot) {
+    if (currentPlayerClient && currentPlayerClient.data.isBot && !(currentPlayerClient instanceof Socket)) {
       this.makeBotTurn(currentPlayerClient)
     }
 
