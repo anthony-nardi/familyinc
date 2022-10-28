@@ -38,7 +38,7 @@ export class RiskyBot implements Bot {
     const currentPlayersHeldChips = getPlayersHeldChips(chipsHeld, this.id)
    
     // No matter what the circumstance, we want to hold more than 3 chips
-    if (currentPlayersHeldChips.length < 3) {
+    if (currentPlayersHeldChips.length <= 3) {
          shouldPass = false;
     } else {
         shouldPass = true

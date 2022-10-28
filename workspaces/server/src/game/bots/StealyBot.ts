@@ -48,15 +48,26 @@ export class StealyBot implements Bot {
             willSteal = true;
           } 
         }
+        if (!willSteal) {
+          const otherPlayerChipsHeld = getPlayersHeldChips(chipsHeld, clientId)
+          if (otherPlayerChipsHeld.length) {
+            canSteal = true
+          }
+        }
       }
     })
 
     // Holding some chips and we cant steal
-    if (currentPlayersHeldChips.length >= 5 && !willSteal && !canSteal) {
-      return true;
+
+    if (!canSteal) {
+      shouldPass = currentPlayersHeldChips.length === 3;
     }
 
-    if (willSteal || canSteal) {
+    if (canSteal && !willSteal) {
+      shouldPass = currentPlayersHeldChips.length >= 5
+    }
+
+    if (willSteal) {
       shouldPass = true
     }
 

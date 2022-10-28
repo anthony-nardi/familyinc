@@ -32,6 +32,7 @@ export class CarefulBot implements Bot {
     }
   }
 
+ 
   shouldPassTurn(chipsHeld: ChipsHeld) {
     let shouldPass = false;
     let willSteal = false;
@@ -46,7 +47,11 @@ export class CarefulBot implements Bot {
           const chipValue: ChipValues = currentPlayersHeldChips[i] as ChipValues
           if (values.get(chipValue)) {
             willSteal = true;
-          } else {
+          } 
+        }
+        if (!willSteal) {
+          const otherPlayerChipsHeld = getPlayersHeldChips(chipsHeld, clientId)
+          if (otherPlayerChipsHeld.length) {
             canSteal = true
           }
         }
@@ -54,12 +59,17 @@ export class CarefulBot implements Bot {
     })
 
     // Holding some chips and we cant steal
-    if (currentPlayersHeldChips.length >= 1 && (willSteal || canSteal)) {
-        shouldPass = true
+
+    if (!canSteal) {
+      shouldPass = currentPlayersHeldChips.length >= 3;
     }
 
-    if (currentPlayersHeldChips.length <= 3) {
-        shouldPass = true
+    if (canSteal && !willSteal) {
+      shouldPass = currentPlayersHeldChips.length >= 3
+    }
+
+    if (willSteal) {
+      shouldPass = true
     }
 
     return shouldPass
