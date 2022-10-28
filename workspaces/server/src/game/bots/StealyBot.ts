@@ -46,9 +46,7 @@ export class StealyBot implements Bot {
           const chipValue: ChipValues = currentPlayersHeldChips[i] as ChipValues
           if (values.get(chipValue)) {
             willSteal = true;
-          } else {
-            canSteal = true
-          }
+          } 
         }
       }
     })
