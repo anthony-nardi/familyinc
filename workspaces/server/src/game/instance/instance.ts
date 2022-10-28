@@ -80,7 +80,7 @@ export class Instance {
 
     // this.lobby.logger.log(JSON.stringify(clients.get(this.currentPlayer)))
     // this.lobby.logger.log(clients.get(this.currentPlayer))
-    
+
     const currentPlayerClient = clients.get(this.currentPlayer)
     if (currentPlayerClient && currentPlayerClient.data.isBot) {
       this.makeBotTurn(currentPlayerClient)
@@ -91,22 +91,17 @@ export class Instance {
   private makeBotTurn(client: AuthenticatedSocket) {
     const playChipsHeld = this.chipsHeld.get(client.id)
     if (this.isPlayerHoldingMoreThan2Chips(playChipsHeld)) {
-      this.lobby.logger.log('pass')
-
       this.passTurn(client)
     } else {
-      this.lobby.logger.log('draw chip')
-
       this.drawChip(client)
     }
 
     if (this.currentPlayer === client.id && !this.hasFinished) {
       setTimeout(() => {
-        this.lobby.logger.log('make another turn')
         this.makeBotTurn(client)
-      }, 3000)
+      }, 2500)
     }
-  } 
+  }
 
   private stealChips() {
     const currentPlayersHeldChips = this.chipsHeld.get(this.currentPlayer)
@@ -166,12 +161,12 @@ export class Instance {
     this.chips.splice(this.chips.indexOf(chipDrawn), 1)
 
     if (this.chips.length === 0) {
-      this.chips = getInitialChips()  // TODO: Subtract from this the currently held chips.
+      this.chips = this.resetChipsAvailable()
     }
 
     const playChipsHeld = this.chipsHeld.get(clientId)
 
-    const currentNumberOfHeldChipsByType = playChipsHeld?.get(chipDrawn) 
+    const currentNumberOfHeldChipsByType = playChipsHeld?.get(chipDrawn)
 
     if (currentNumberOfHeldChipsByType === 0) {
       playChipsHeld?.set(chipDrawn, 1)
@@ -258,5 +253,36 @@ export class Instance {
     }
 
     this.scores.set(this.currentPlayer, currentScore + scoreToAdd)
+  }
+
+  private getAllChipsInPlay() {
+    const chipsInPlay: string[] = []
+    const clientIds = Array.from(this.lobby.clients.keys());
+    for (let i = 0; i < clientIds.length; i++) {
+      const playerChips = this.chipsHeld.get(clientIds[i])
+      for (let k = 1; k <= 10; k++) {
+        const chipValue = `${k}` as ChipValues
+        const chipsHeld = playerChips?.get(chipValue)
+        if (chipsHeld) {
+          for (let l = 0; l < chipsHeld; l++) {
+            chipsInPlay.push(chipValue)
+
+          }
+        }
+      }
+    }
+    return chipsInPlay
+  }
+
+  private resetChipsAvailable() {
+    const chipsInPlay = this.getAllChipsInPlay()
+    const initialChips = getInitialChips()
+
+    for (let i = 0; i < chipsInPlay.length; i++) {
+      initialChips.splice(initialChips.indexOf(chipsInPlay[i]), 1)
+
+    }
+
+    return initialChips
   }
 }
