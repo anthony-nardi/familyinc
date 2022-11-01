@@ -17,7 +17,7 @@ export default function Game() {
     currentLobbyState.currentPlayer &&
     currentLobbyState.clients[currentLobbyState.currentPlayer] &&
     currentLobbyState.clients[currentLobbyState.currentPlayer].userName;
-  const [selectedBotValue, setBotValue] = useState('0')
+  const [selectedBotValue, setBotValue] = useState("0");
   const onReplay = () => {
     sm.emit({
       event: ClientEvents.LobbyCreate,
@@ -42,7 +42,7 @@ export default function Game() {
   const startGame = () => {
     sm.emit({
       event: ClientEvents.StartGame,
-      data: {bots: selectedBotValue},
+      data: { bots: selectedBotValue },
     });
   };
 
@@ -58,16 +58,20 @@ export default function Game() {
     });
   };
 
-  const possibleBots = 7 - currentLobbyState.playersCount
+  const possibleBots = 7 - currentLobbyState.playersCount;
 
-  const botOptions = [{
-    value: '0', label: 'Add 0 bots'
-  }]
+  const botOptions = [
+    {
+      value: "0",
+      label: "Add 0 bots",
+    },
+  ];
 
   for (let i = 1; i <= possibleBots; i++) {
     botOptions.push({
-      value: `${i}`, label: `Add ${i} bots`
-    })
+      value: `${i}`,
+      label: `Add ${i} bots`,
+    });
   }
 
   return (
@@ -114,28 +118,29 @@ export default function Game() {
           <Button className="btn" onClick={copyLobbyLink}>
             Copy lobby link
           </Button>
-          {(currentLobbyState.playersCount > 1 || selectedBotValue !== '0') && isHost && (
-            <Button className="btn" onClick={startGame}>
-              Start game
-            </Button>
-          )}
+          {(currentLobbyState.playersCount > 1 || selectedBotValue !== "0") &&
+            isHost && (
+              <Button className="btn" onClick={startGame}>
+                Start game
+              </Button>
+            )}
         </div>
       )}
 
-      {
-        !currentLobbyState.hasStarted && isHost && currentLobbyState.playersCount < 7 && (
+      {!currentLobbyState.hasStarted &&
+        isHost &&
+        currentLobbyState.playersCount < 7 && (
           <Select
             label="Add bots"
             data={botOptions}
-            value={selectedBotValue} 
+            value={selectedBotValue}
             onChange={(val) => {
-              if (typeof val === 'string') {
-                setBotValue(val)
+              if (typeof val === "string") {
+                setBotValue(val);
               }
             }}
           />
-        )
-      }
+        )}
 
       {currentLobbyState.hasStarted &&
         clientId === currentLobbyState.currentPlayer &&

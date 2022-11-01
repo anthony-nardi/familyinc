@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Diamond } from "@icons/index";
+
 export default function Diamonds({ count }: {count: number }) {
   if (!count) {
     return null;

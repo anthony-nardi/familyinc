@@ -1,7 +1,8 @@
 import { Bot } from '@app/game/bots/bot'
-import { isPlayerHoldingMoreThan2Chips,getPlayersHeldChips } from '@app/game/instance/utils'
+import { getPlayersHeldChips } from '@app/game/instance/utils'
 import { Lobby } from '@app/game/lobby/lobby';
-import { ChipsHeld, ChipValues } from '@app/game/types'
+import { ChipsHeld,  } from '@app/game/types'
+import {ChipValues} from '@familyinc/shared/common/GameState'
 
 export class StealyBot implements Bot {
   public id: string;

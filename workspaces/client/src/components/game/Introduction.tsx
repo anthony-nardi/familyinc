@@ -94,14 +94,14 @@ export default function Introduction() {
           <p className="mt-4">
             When you draw a chip whose value matches a chip you already have,
             remove from the game all the chips you have drawn this turn. If
-            you&lsquo;ve drawn 3 chips or less this turn you receive a diamond. 3
-            diamonds and you&lsquo;ll automatically score 50 points, those diamonds
-            are removed from the game. Then your turn ends.
+            you&lsquo;ve drawn 3 chips or less this turn you receive a diamond.
+            3 diamonds and you&lsquo;ll automatically score 50 points, those
+            diamonds are removed from the game. Then your turn ends.
           </p>
           <p className="mt-4">
             When you decide to stop, you steal each chip owned by your opponents
-            that match the values of any chip you&lsquo;ve drawn this turn. Then your
-            turn ends.
+            that match the values of any chip you&lsquo;ve drawn this turn. Then
+            your turn ends.
           </p>
           <div className="mt-4">
             <Title order={5}>2-7 Players</Title>

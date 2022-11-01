@@ -1,5 +1,5 @@
-import { AuthenticatedSocket, ChipValues, ChipsHeld } from '@app/game/types';
-
+import { ChipsHeld } from '@app/game/types';
+import { ChipValues } from '@familyinc/shared/common/GameState'
 
 export const getInitialChips = () => {
   return [

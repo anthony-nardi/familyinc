@@ -1,10 +1,11 @@
 import { Lobby } from '@app/game/lobby/lobby';
-import { AuthenticatedSocket,ChipValues, ChipsHeld,DiamondsHeld,Scores } from '@app/game/types';
+import { AuthenticatedSocket, ChipsHeld, DiamondsHeld, Scores } from '@app/game/types';
+import { ChipValues } from '@familyinc/shared/common/GameState'
 import { Socket } from 'socket.io';
 import { ServerPayloads } from '@shared/server/ServerPayloads';
 import { ServerEvents } from '@shared/server/ServerEvents';
 import { getInitialChips, isPlayerHoldingMoreThan2Chips } from '@app/game/instance/utils';
-import {Bot} from '@app/game/bots/Bot'
+import { Bot } from '@app/game/bots/Bot'
 
 const getRandomItemFromMap = (iterable) => iterable.get([...iterable.keys()][Math.floor(Math.random() * iterable.size)])
 const getRandomItemFromArray = (items) => items[Math.floor(Math.random() * items.length)];
@@ -63,9 +64,6 @@ export class Instance {
       this.chipsHeld.set(clientId, newSetOfChips)
     })
 
-    // this.lobby.logger.log(JSON.stringify(clients.get(this.currentPlayer)))
-    // this.lobby.logger.log(clients.get(this.currentPlayer))
-
     const currentPlayerClient = clients.get(this.currentPlayer)
     if (currentPlayerClient && currentPlayerClient.data.isBot) {
       this.makeBotTurn(currentPlayerClient as Bot)
@@ -73,10 +71,10 @@ export class Instance {
 
   }
 
-  private makeBotTurn(client:  Bot) {
-    
+  private makeBotTurn(client: Bot) {
+
     const shouldBotPass = client.shouldPassTurn(this.chipsHeld, this.diamondsHeld, this.scores)
-    this.lobby.logger.log(`${client.data.userName} decides to ${shouldBotPass ? 'pass': 'draw'}.`)
+
     if (shouldBotPass) {
       this.passTurn(client)
     } else {
@@ -161,11 +159,11 @@ export class Instance {
       // loses currently held chips
       this.chipsHeld.set(clientId, this.getInitialPlayerHeldChips())
       let hasBustedWithoutReceivingDiamond = false
-      
+
       if (playChipsHeld) {
         hasBustedWithoutReceivingDiamond = isPlayerHoldingMoreThan2Chips(playChipsHeld)
-        }
-      
+      }
+
 
       if (hasBustedWithoutReceivingDiamond) {
         // more than 3 chips - just pass turn

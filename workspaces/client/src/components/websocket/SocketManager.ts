@@ -12,16 +12,14 @@ type EmitOptions<T> = {
   data?: T;
 };
 
-export default class SocketManager
-{
+export default class SocketManager {
   public readonly socket: Socket;
 
   public setSocketState: SetterOrUpdater<SocketState>;
 
   private connectionLost: boolean = false;
 
-  constructor()
-  {
+  constructor() {
     this.socket = io(process.env.NEXT_PUBLIC_WS_API_URL as string, {
       autoConnect: false,
       path: '/wsapi',
@@ -34,15 +32,13 @@ export default class SocketManager
     this.onException();
   }
 
-  emit<T>(options: EmitOptions<T>): this
-  {
+  emit<T>(options: EmitOptions<T>): this {
     this.socket.emit(options.event, options.data);
 
     return this;
   }
 
-  getSocketId(): string | null
-  {
+  getSocketId(): string | null {
     if (!this.socket.connected) {
       return null;
     }
@@ -50,32 +46,27 @@ export default class SocketManager
     return this.socket.id;
   }
 
-  connect(): void
-  {
+  connect(): void {
     this.socket.connect();
   }
 
-  disconnect(): void
-  {
+  disconnect(): void {
     this.socket.disconnect();
   }
 
-  registerListener<T>(event: ServerEvents, listener: Listener<T>): this
-  {
+  registerListener<T>(event: ServerEvents, listener: Listener<T>): this {
     this.socket.on(event, listener);
 
     return this;
   }
 
-  removeListener<T>(event: ServerEvents, listener: Listener<T>): this
-  {
+  removeListener<T>(event: ServerEvents, listener: Listener<T>): this {
     this.socket.off(event, listener);
 
     return this;
   }
 
-  private onConnect(): void
-  {
+  private onConnect(): void {
     this.socket.on('connect', () => {
       if (this.connectionLost) {
         showNotification({
@@ -88,8 +79,7 @@ export default class SocketManager
     });
   }
 
-  private onDisconnect(): void
-  {
+  private onDisconnect(): void {
     this.socket.on('disconnect', async (reason: Socket.DisconnectReason) => {
       if (reason === 'io client disconnect') {
         showNotification({
@@ -117,13 +107,12 @@ export default class SocketManager
       }
 
       this.setSocketState((currVal) => {
-        return {...currVal, connected: false};
+        return { ...currVal, connected: false };
       });
     });
   }
 
-  private onException(): void
-  {
+  private onException(): void {
     this.socket.on('exception', (data: ServerExceptionResponse) => {
       if (typeof data.exception === 'undefined') {
         showNotification({

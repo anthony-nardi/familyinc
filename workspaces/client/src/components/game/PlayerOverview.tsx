@@ -39,7 +39,7 @@ export default function PlayerOverview({
       {isHost && " (Host)"}
       {you && " (You)"}
       <div className={`${textColor} text-2xl`}>
-        {typeof score === 'number' && `Score: ${score}`}
+        {typeof score === "number" && `Score: ${score}`}
       </div>
       <div>
         <Diamonds count={diamonds} />
@@ -48,7 +48,7 @@ export default function PlayerOverview({
         {chips &&
           Object.entries(chips).map(([chipValue, chipCount], index) => {
             return (
-                // @ts-expect-error any
+              // @ts-expect-error any
               <Chip chipValue={chipValue} chipCount={chipCount} key={index} />
             );
           })}
