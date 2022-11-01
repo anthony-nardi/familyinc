@@ -11,8 +11,7 @@ import {
   Chip9,
   Chip10,
 } from "@icons/index";
-
-type ChipValues = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
+import { ChipValues } from "@familyinc/shared/common/GameState";
 
 const ImageMap = {
   "1": Chip1,
@@ -42,12 +41,7 @@ export default function Chip({
 
   for (let i = 0; i < chipCount; i++) {
     images.push(
-      <Image
-      priority
-        src={ImageMap[chipValue]}
-        height="40"
-        width="40"
-      />
+      <Image priority src={ImageMap[chipValue]} height="40" width="40" />
     );
   }
   return <>{images}</>;

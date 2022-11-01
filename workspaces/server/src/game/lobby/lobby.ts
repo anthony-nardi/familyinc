@@ -4,12 +4,13 @@ import { ServerEvents } from '@shared/server/ServerEvents';
 import { AuthenticatedSocket } from '@app/game/types';
 import { Instance } from '@app/game/instance/instance';
 import { ServerPayloads, Color, colorMap } from '@shared/server/ServerPayloads';
+import { Bot } from '@app/game/bots/bot';
 
 
 export class Lobby {
   public readonly id: string = v4();
   public readonly createdAt: Date = new Date();
-  public readonly clients: Map<Socket['id'], AuthenticatedSocket> = new Map<Socket['id'], AuthenticatedSocket>();
+  public readonly clients: Map<Socket['id'], AuthenticatedSocket | Bot> = new Map<Socket['id'], AuthenticatedSocket>();
   public readonly instance: Instance = new Instance(this);
 
   constructor(
@@ -19,20 +20,26 @@ export class Lobby {
   ) {
   }
 
-  public addClient(client: AuthenticatedSocket, userName: string): void {
+  public addClient(client: AuthenticatedSocket | Bot, userName: string): void {
     if (this.instance.hasStarted) {
       this.logger.log('Game has already started. We cant add a new player in the middle of a game.')
-      client.emit(ServerEvents.GameMessage, {
-        color: 'red',
-        message: 'The game has already started.',
-      })
-      return
+
+      if (client instanceof Socket) {
+        client.emit(ServerEvents.GameMessage, {
+          color: 'red',
+          message: 'The game has already started.',
+        })
+      } 
     }
 
     this.logger.log(`Setting ${client.id} client`)
 
     this.clients.set(client.id, client);
-    client.join && client.join(this.id);
+
+    if (client instanceof Socket) {
+      client.join(this.id);
+    }
+
     client.data.lobby = this;
     client.data.color = colorMap[this.clients.size];
     client.data.userName = userName

@@ -1,7 +1,7 @@
-import SocketManager from '@components/websocket/SocketManager';
-import SocketState from '@components/websocket/SocketState';
-import React, { createContext } from 'react';
-import { useSetRecoilState } from 'recoil';
+import SocketManager from "@components/websocket/SocketManager";
+import SocketState from "@components/websocket/SocketState";
+import React, { createContext } from "react";
+import { useSetRecoilState } from "recoil";
 
 const socketManager = new SocketManager();
 
@@ -11,9 +11,14 @@ type ProviderProps = {
   children: React.ReactNode;
 };
 
-export function SocketManagerProvider({children}: ProviderProps): JSX.Element
-{
+export function SocketManagerProvider({
+  children,
+}: ProviderProps): JSX.Element {
   socketManager.setSocketState = useSetRecoilState(SocketState);
 
-  return <SocketManagerContext.Provider value={socketManager}>{children}</SocketManagerContext.Provider>;
+  return (
+    <SocketManagerContext.Provider value={socketManager}>
+      {children}
+    </SocketManagerContext.Provider>
+  );
 }
