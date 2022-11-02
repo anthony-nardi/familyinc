@@ -5,7 +5,7 @@ import { Socket } from 'socket.io';
 import { ServerPayloads } from '@shared/server/ServerPayloads';
 import { ServerEvents } from '@shared/server/ServerEvents';
 import { getInitialChips, isPlayerHoldingMoreThan2Chips } from '@app/game/instance/utils';
-import { Bot } from '@app/game/bots/Bot'
+import { Bot } from '@app/game/bots/bot'
 
 const getRandomItemFromMap = (iterable) => iterable.get([...iterable.keys()][Math.floor(Math.random() * iterable.size)])
 const getRandomItemFromArray = (items) => items[Math.floor(Math.random() * items.length)];
