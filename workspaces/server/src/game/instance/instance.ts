@@ -167,6 +167,10 @@ export class Instance {
 
       if (hasBustedWithoutReceivingDiamond) {
         // more than 3 chips - just pass turn
+        this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(ServerEvents.GameMessage, {
+          color: 'yellow',
+          message: `${client.data.userName} has busted after drawing a ${chipDrawn}! No diamond given.`,
+        });
         this.passTurn(client)
       } else {
         // less than 3 chips - receive diamond or score 50
@@ -175,10 +179,18 @@ export class Instance {
         this.diamondsHeld.set(clientId, nextDiamondsHeld)
 
         if (nextDiamondsHeld < 3) {
+          this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(ServerEvents.GameMessage, {
+            color: 'yellow',
+            message: `${client.data.userName} has busted after drawing a ${chipDrawn}! Player receives a diamond.`,
+          });
           this.passTurn(client)
         }
 
         if (nextDiamondsHeld === 3) {
+          this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(ServerEvents.GameMessage, {
+            color: 'yellow',
+            message: `${client.data.userName} has busted after drawing a ${chipDrawn}! ${client.data.userName} has received 50 points!`,
+          });
           this.diamondsHeld.set(clientId, 0)
           const currentPlayerScore = this.scores.get(clientId) || 0
           const nextScore = currentPlayerScore + 50;
