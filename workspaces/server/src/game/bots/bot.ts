@@ -10,6 +10,7 @@ export interface Bot {
     isHost: boolean;
     isBot: boolean;
     userName?: string
+    uuid? : string
   }
 
   shouldPassTurn: Function

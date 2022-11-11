@@ -61,6 +61,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   async handleDisconnect(client: AuthenticatedSocket): Promise<void> {
     // Handle termination of socket
+    console.log('socket terminated')
     this.lobbyManager.terminateSocket(client);
   }
 
@@ -87,7 +88,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage(ClientEvents.LobbyJoin)
   onLobbyJoin(client: AuthenticatedSocket, data: LobbyJoinDto): void {
-    this.lobbyManager.joinLobby(data.lobbyId, client, data.userName);
+    console.log(`rejoining... ${data.clientUUID}`)
+    this.lobbyManager.joinLobby(data.lobbyId, client, data.userName, data.clientUUID);
   }
 
   @SubscribeMessage(ClientEvents.LobbyLeave)
@@ -119,7 +121,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             isHost: false,
             isBot: true
           }
-        }) 
+        })
 
         this.lobbyManager.joinLobby(lobby.id, bot, bot.data.userName);
 

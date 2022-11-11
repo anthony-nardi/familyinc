@@ -99,7 +99,7 @@ export default class SocketManager {
 
       if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
         showNotification({
-          message: 'Connection lost to the server',
+          message: `Connection lost to the server because ${reason}`,
           color: 'orange',
           autoClose: 3000,
         });

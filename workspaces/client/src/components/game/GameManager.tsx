@@ -14,6 +14,37 @@ export default function GameManager() {
   const router = useRouter();
   const { sm } = useSocketManager();
   const [lobbyState, setLobbyState] = useRecoilState(CurrentLobbyState);
+  const clientId = sm.getSocketId();
+
+  useEffect(() => {
+    if (!clientId) {
+      return;
+    }
+
+    console.log(`Client ID: ${clientId}`);
+    const familyIncLocalStorageValues = localStorage.getItem("familyinc");
+
+    if (familyIncLocalStorageValues) {
+      const parsedFamilyIncLocalStorageValues = JSON.parse(
+        familyIncLocalStorageValues
+      );
+      console.log(parsedFamilyIncLocalStorageValues);
+      if (
+        parsedFamilyIncLocalStorageValues &&
+        (parsedFamilyIncLocalStorageValues.lobbyId === lobbyState?.lobbyId ||
+          !parsedFamilyIncLocalStorageValues.lobbyId)
+      ) {
+        parsedFamilyIncLocalStorageValues.clientUUID =
+          lobbyState?.clients[clientId].uuid;
+        parsedFamilyIncLocalStorageValues.lobbyId = lobbyState?.lobbyId;
+        console.log(parsedFamilyIncLocalStorageValues);
+        localStorage.setItem(
+          "familyinc",
+          JSON.stringify(parsedFamilyIncLocalStorageValues)
+        );
+      }
+    }
+  }, [clientId]);
 
   useEffect(() => {
     sm.connect();
@@ -24,6 +55,21 @@ export default function GameManager() {
       setLobbyState(data);
 
       router.query.lobby = data.lobbyId;
+      const familyIncLocalStorageValues = localStorage.getItem("familyinc");
+
+      if (familyIncLocalStorageValues) {
+        const parsedFamilyIncLocalStorageValues = JSON.parse(
+          familyIncLocalStorageValues
+        );
+        if (parsedFamilyIncLocalStorageValues.lobbyId !== data.lobbyId) {
+          localStorage.setItem(
+            "familyinc",
+            JSON.stringify({
+              lobbyId: data.lobbyId,
+            })
+          );
+        }
+      }
 
       await router.push(
         {

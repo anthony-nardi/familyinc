@@ -10,7 +10,8 @@ export type AuthenticatedSocket = Socket & {
     color: Color,
     userName: string,
     isHost: true | false,
-    isBot: false | true
+    isBot: false | true,
+    uuid?: string 
   };
 
   emit: <T>(ev: ServerEvents, data: T) => boolean;

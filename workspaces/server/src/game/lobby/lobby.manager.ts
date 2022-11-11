@@ -29,7 +29,7 @@ export class LobbyManager {
     return lobby;
   }
 
-  public joinLobby(lobbyId: string, client: AuthenticatedSocket | Bot, userName: string): void {
+  public joinLobby(lobbyId: string, client: AuthenticatedSocket | Bot, userName: string, clientUUID?: string): void {
     const lobby = this.lobbies.get(lobbyId);
 
     if (!lobby) {
@@ -40,7 +40,7 @@ export class LobbyManager {
       throw new ServerException(SocketExceptions.LobbyError, 'Lobby already full');
     }
 
-    lobby.addClient(client, userName);
+    lobby.addClient(client, userName, clientUUID);
   }
 
   // Periodically clean up lobbies

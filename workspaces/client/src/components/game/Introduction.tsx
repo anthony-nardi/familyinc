@@ -10,12 +10,13 @@ export default function Introduction() {
   const { sm } = useSocketManager();
   const [userName, setUserName] = useState("");
 
-  const onJoinLobby = () => {
+  const onJoinLobby = (clientUUID?: string) => {
     sm.emit({
       event: ClientEvents.LobbyJoin,
       data: {
         lobbyId: router.query.lobby,
         userName,
+        clientUUID,
       },
     });
   };
@@ -30,6 +31,27 @@ export default function Introduction() {
 
     emitEvent("lobby_create");
   };
+
+  useEffect(() => {
+    const familyIncLocalStorageValues = localStorage.getItem("familyinc");
+    let parsedFamilyIncLocalStorageValues;
+
+    if (familyIncLocalStorageValues) {
+      parsedFamilyIncLocalStorageValues = JSON.parse(
+        familyIncLocalStorageValues
+      );
+    }
+    if (
+      parsedFamilyIncLocalStorageValues &&
+      router.query.lobby === parsedFamilyIncLocalStorageValues.lobbyId &&
+      parsedFamilyIncLocalStorageValues.clientUUID
+    ) {
+      console.log(
+        `Attempt to rejoin lobby ${parsedFamilyIncLocalStorageValues.lobbyId} as ${parsedFamilyIncLocalStorageValues.clientUUID}`
+      );
+      onJoinLobby(parsedFamilyIncLocalStorageValues.clientUUID);
+    }
+  }, [router.query.lobby]);
 
   return (
     <div className="mt-4 mx-auto max-w-5xl flex">
