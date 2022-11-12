@@ -29,6 +29,9 @@ export default function Game() {
     emitEvent("lobby_create");
   };
 
+  console.log(currentLobbyState);
+  console.log(clientId);
+
   const copyLobbyLink = async () => {
     const link = `${window.location.origin}?lobby=${currentLobbyState.lobbyId}`;
     await navigator.clipboard.writeText(link);

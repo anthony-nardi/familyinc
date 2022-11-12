@@ -19,47 +19,76 @@ export class Lobby {
   ) {
   }
 
-  public addClient(client: AuthenticatedSocket | Bot, userName: string, clientUUID?: string): void {
-    this.logger.log('Add Client.')
+  private replaceOldClientWithNew(client: AuthenticatedSocket | Bot, clientUUID: string) {
+    // we must essentially add this new client and copy all existing state from the old client to this one...
+    this.clients.forEach(maybeOldClient => {
 
-    if (this.instance.hasStarted) {
-      this.logger.log('Game has already started. We cant add a new player in the middle of a game.')
+      const doesOldClientInstanceExist = maybeOldClient.data.uuid === clientUUID
 
-      if (client instanceof Socket) {
-        client.emit(ServerEvents.GameMessage, {
-          color: 'red',
-          message: 'The game has already started.',
-        })
-      }
+      if (doesOldClientInstanceExist) {
+        const oldClientId = maybeOldClient.id
+        // Copy old client data to new client data
+        client.data = { ...maybeOldClient.data }
 
-      if (clientUUID) {
-        // we must essentially add this new client and copy all existing state from the old client to this one...
+        // Delete old client
+        this.clients.delete(maybeOldClient.id)
+        // @ts-expect-error ignore
+        maybeOldClient.leave(this.id)
+        maybeOldClient.data.lobby = null
 
-        this.clients.forEach(maybeOldClient => {
-          if (maybeOldClient.data.uuid === clientUUID) {
-            client.data = { ...maybeOldClient.data }
+        // If game has started we need to:
+        // (fix anything that ever included the client.id)
+        // - Fix the turn order
+        // - Fix the current player
+        if (this.instance.hasStarted) {
 
-            this.clients.delete(maybeOldClient.id)
-            if (client instanceof Socket) {
-              // @ts-expect-error ignore
-              maybeOldClient.leave(this.id)
-              maybeOldClient.data.lobby = null
-              const leavingPlayerTurnOrderIndex = this.instance.turnOrder.indexOf(maybeOldClient.id)
-              if (leavingPlayerTurnOrderIndex > -1) {
-                this.instance.turnOrder[leavingPlayerTurnOrderIndex] = client.id
-              }
-              console.log('old client id ' + maybeOldClient.id)
-              if (this.instance.currentPlayer === maybeOldClient.id) {
-                this.instance.currentPlayer = client.id
-              }
-            }
-
+          // Turn Order
+          const leavingPlayerTurnOrderIndex = this.instance.turnOrder.indexOf(maybeOldClient.id)
+          if (leavingPlayerTurnOrderIndex > -1) {
+            this.instance.turnOrder[leavingPlayerTurnOrderIndex] = client.id
           }
-        })
+
+          // Current Player
+          if (this.instance.currentPlayer === maybeOldClient.id) {
+            this.instance.currentPlayer = client.id
+          }
+
+        }
+
+        // Host
+        if (client.data.isHost) {
+          this.instance.setHostId(client.id)
+        }
+
+        // Scores
+        const scoresForOldClient = this.instance.scores.get(oldClientId)
+        if (scoresForOldClient) {
+          this.instance.scores.set(client.id, scoresForOldClient)
+        }
+        this.instance.scores.delete(oldClientId)
+
+        // Chips Held
+        const chipsForOldClient = this.instance.chipsHeld.get(oldClientId)
+        if (chipsForOldClient) {
+          this.instance.chipsHeld.set(client.id, chipsForOldClient)
+        }
+        this.instance.chipsHeld.delete(oldClientId)
+
+        // Diamonds Held
+        const diamondsForOldClient = this.instance.diamondsHeld.get(oldClientId)
+        if (diamondsForOldClient) {
+          this.instance.diamondsHeld.set(client.id, diamondsForOldClient)
+        }
+        this.instance.diamondsHeld.delete(oldClientId)
+
       }
+    })
+  }
 
+  public addClient(client: AuthenticatedSocket | Bot, userName: string, clientUUID?: string): void {
 
-
+    if (clientUUID) {
+      this.replaceOldClientWithNew(client, clientUUID)
     }
 
     this.logger.log(`Setting ${client.id} client`)
@@ -101,6 +130,7 @@ export class Lobby {
   }
 
   public removeClient(client: AuthenticatedSocket): void {
+    this.logger.log(`${client.id} disconnected.`)
     // this.clients.delete(client.id);
     // client.leave(this.id);
     // client.data.lobby = null;
