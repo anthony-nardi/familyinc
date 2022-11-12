@@ -48,7 +48,7 @@ export default function Game() {
   };
 
   const drawChip = () => {
-    playSound(`/static/sounds/draw_chip.wav`);
+    playSound(`/sounds/draw_chip.wav`);
     sm.emit({
       event: ClientEvents.DrawChip,
     });
