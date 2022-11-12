@@ -7,7 +7,6 @@ import { showNotification } from "@mantine/notifications";
 import { emitEvent } from "@utils/analytics";
 import { PlayersOverview } from "./PlayersOverview";
 import { useState } from "react";
-import { playSound } from "@utils/sound";
 
 export default function Game() {
   const { sm } = useSocketManager();
@@ -48,7 +47,6 @@ export default function Game() {
   };
 
   const drawChip = () => {
-    playSound(`/sounds/draw_chip.wav`);
     sm.emit({
       event: ClientEvents.DrawChip,
     });
