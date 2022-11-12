@@ -1,14 +1,70 @@
 import useSocketManager from "@hooks/useSocketManager";
 import { ClientEvents } from "@familyinc/shared/client/ClientEvents";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { emitEvent } from "@utils/analytics";
 import { Divider, Select, TextInput, Button, Title, List } from "@mantine/core";
-
+import {
+  Chip1,
+  Chip2,
+  Chip3,
+  Chip4,
+  Chip5,
+  Chip6,
+  Chip7,
+  Chip8,
+  Chip9,
+  Chip10,
+} from "@icons/index";
 export default function Introduction() {
   const router = useRouter();
   const { sm } = useSocketManager();
   const [userName, setUserName] = useState("");
+  const canvasRef = useRef(null);
+  const chip1Ref = useRef(null);
+  const chip2Ref = useRef(null);
+  const chip3Ref = useRef(null);
+  const chip4Ref = useRef(null);
+  const chip5Ref = useRef(null);
+  const chip6Ref = useRef(null);
+  const chip7Ref = useRef(null);
+  const chip8Ref = useRef(null);
+  const chip9Ref = useRef(null);
+  const chip10Ref = useRef(null);
+
+  const chip1RenderRef = useRef(0);
+  const chip2RenderRef = useRef(0);
+  const chip3RenderRef = useRef(0);
+  const chip4RenderRef = useRef(0);
+  const chip5RenderRef = useRef(0);
+  const chip6RenderRef = useRef(0);
+  const chip7RenderRef = useRef(0);
+  const chip8RenderRef = useRef(0);
+  const chip9RenderRef = useRef(0);
+  const chip10RenderRef = useRef(0);
+
+  const draw = (ctx) => {
+    ctx.fillStyle = "#000000";
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(chip1Ref.current, 500, chip1RenderRef.current, 40, 40);
+    chip1RenderRef.current = chip1RenderRef.current + 1;
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    let animationFrameId;
+
+    const render = () => {
+      draw(context);
+      animationFrameId = window.requestAnimationFrame(render);
+    };
+    render();
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [draw]);
 
   const onJoinLobby = () => {
     sm.emit({
@@ -111,6 +167,26 @@ export default function Introduction() {
             </p>
           </div>
         </div>
+      </div>
+      <div className="canvas-container">
+        <canvas
+          id="canvas"
+          ref={canvasRef}
+          width={typeof window !== "undefined" ? window.innerWidth : 0}
+          height={typeof window !== "undefined" ? window.innerHeight : 0}
+        />
+      </div>
+      <div className="canvas-images">
+        <img src={"/chip-1.png"} width="40" height="40" ref={chip1Ref} />
+        <img src={"/chip-2.png"} width="40" height="40" ref={chip2Ref} />
+        <img src={"/chip-3.png"} width="40" height="40" ref={chip3Ref} />
+        <img src={"/chip-4.png"} width="40" height="40" ref={chip4Ref} />
+        <img src={"/chip-5.png"} width="40" height="40" ref={chip5Ref} />
+        <img src={"/chip-6.png"} width="40" height="40" ref={chip6Ref} />
+        <img src={"/chip-7.png"} width="40" height="40" ref={chip7Ref} />
+        <img src={"/chip-8.png"} width="40" height="40" ref={chip8Ref} />
+        <img src={"/chip-9.png"} width="40" height="40" ref={chip9Ref} />
+        <img src={"/chip-10.png"} width="40" height="40" ref={chip10Ref} />
       </div>
     </div>
   );
