@@ -14,7 +14,7 @@ export default function Introduction() {
   const { sm } = useSocketManager();
   const [userName, setUserName] = useState("");
   const canvasContainerRef = useRef(null);
-  const canvasRef = useRef(null);
+  const appContainerRef = useRef(null);
   const chip1Ref = useRef(null);
   const chip2Ref = useRef(null);
   const chip3Ref = useRef(null);
@@ -43,20 +43,53 @@ export default function Introduction() {
     if (canvasContainerRef.current && !canvasRendered) {
       canvasRendered = true;
       const items = [];
+      // @ts-expect-error ignore
+
+      const contentRect = appContainerRef.current.getBoundingClientRect()
+      console.log(contentRect)
+
+      const leftZone = [0, contentRect.left]
+      // @ts-expect-error ignore
+
+      const rightZone = [contentRect.right, canvasContainerRef.current.clientWidth]
 
       for (let i = 0; i < 25; i++) {
         const randomInt = Math.floor(random(1, refs.length));
-        const randomSpeedScale = random(0.6, 1.5);
-        const randomX = random(0, canvasContainerRef.current.clientWidth);
-        const randomY = random(-1000, 0);
-        console.log(randomSpeedScale);
+        const randomSpeedScale = random(0.6, 1.3);
+        const randomX = Math.random() < .5 ? random(leftZone[0], leftZone[1]) : random(rightZone[0], rightZone[1])
+        const randomY = random(-4000, -500);
         items.push({
           ref: refs[randomInt],
           x: randomX,
           y: randomY,
-          speed: randomSpeedScale,
+          speed: randomSpeedScale * .8,
           scale: randomSpeedScale,
         });
+      }
+      for (let i = 0; i < 25; i++) {
+        const randomInt = Math.floor(random(1, refs.length / 2));
+        const randomSpeedScale = random(0.4, .7);
+        const randomX = Math.random() < .5 ? random(leftZone[0], leftZone[1]) : random(rightZone[0], rightZone[1])
+        const randomY = random(-1500, -500);
+        items.push({
+          ref: refs[randomInt],
+          x: randomX,
+          y: randomY,
+          speed: randomSpeedScale * .8,
+          scale: randomSpeedScale,
+        });
+      }
+      for (let i = 0; i < 10; i++) {
+        const randomSpeedScale = random(0.6, 1.5);
+        const randomX = Math.random() < .5 ? random(leftZone[0], leftZone[1]) : random(rightZone[0], rightZone[1])
+        const randomY = random(-2000, -500);
+        items.push({
+          ref: diamondRef,
+          x: randomX,
+          y: randomY,
+          speed: randomSpeedScale * .8,
+          scale: randomSpeedScale,
+        })
       }
       const theCanvas = new Canvas(canvasContainerRef.current, {
         items,
@@ -88,7 +121,7 @@ export default function Introduction() {
   };
 
   return (
-    <div className="mt-4 mx-auto max-w-5xl flex">
+    <div className="mt-4 mx-auto max-w-5xl flex" ref={appContainerRef}>
       <div className="basis-1/2">
         <div className="mb-8">
           <Title order={1}>Family Inc.</Title>
