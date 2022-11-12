@@ -1,26 +1,14 @@
 
 
 type Options = {
-    maxRockets?: number
-    numParticles?: number
-    explosionMinHeight?: number
-    explosionMaxHeight?: number
-    explosionChance?: number
-    rocketSpawnInterval?: number
     width?: number
     height?: number
-    rocketInitialPoint?: number
 }
 
-export default class Fireworks {
+export default class Canvas {
     private container: HTMLElement
-    private maxRockets: number
-    private rocketSpawnInterval: number
     private cw: number
     private ch: number
-    private minH: number
-    private maxH: number
-    private chance: number
     private interval: number
     private rafInterval: number
 
@@ -33,25 +21,14 @@ export default class Fireworks {
     constructor(
         container: HTMLElement,
         {
-            rocketSpawnInterval = 150,
-            maxRockets = 3,
-            numParticles = 100,
-            explosionMinHeight = 0.2,
-            explosionMaxHeight = 0.9,
-            explosionChance = 0.08,
             width = container.clientWidth,
             height = container.clientHeight,
 
         }: Options = {}
     ) {
         this.container = container
-        this.rocketSpawnInterval = rocketSpawnInterval
-        this.maxRockets = maxRockets
         this.cw = width
         this.ch = height
-        this.maxH = this.ch * (1 - explosionMaxHeight)
-        this.minH = this.ch * (1 - explosionMinHeight)
-        this.chance = explosionChance
         this.pixelRatio = window.devicePixelRatio || 1
         this.canvas = document.createElement('canvas')
         this.ctx = this.canvas.getContext('2d')
