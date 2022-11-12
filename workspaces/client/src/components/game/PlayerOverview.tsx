@@ -1,10 +1,11 @@
 import {
   colorToBorderColorClass,
   colorToTextColorClass,
-  Colors,
 } from "../../constants/colorToCssClass";
 import Chip from "./Chip";
 import Diamonds from "./Diamonds";
+import { playSound } from "@utils/sound";
+import { useEffect, useRef } from "react";
 
 export default function PlayerOverview({
   playerInfo,
@@ -29,6 +30,39 @@ export default function PlayerOverview({
   const borderColor = colorToBorderColorClass[color];
 
   const isActivePlayerClassName = isCurrentPlayer ? "active" : "inactive";
+
+  const prevChipCount = useRef<number>(0);
+
+  const totalNumberOfChipsHeld: number = chips
+    ? (Object.values(chips).reduce(
+        // @ts-expect-error figure out
+        (sum: number, count: number) => {
+          return sum + count;
+        },
+        0
+      ) as number)
+    : 0;
+
+  useEffect(() => {
+    if (diamonds) {
+      playSound("/sounds/receive_diamond.wav");
+    }
+  }, [diamonds]);
+
+  useEffect(() => {
+    if (
+      totalNumberOfChipsHeld === prevChipCount.current + 1 ||
+      totalNumberOfChipsHeld === 1
+    ) {
+      playSound("/sounds/draw_chip.wav");
+    }
+
+    if (totalNumberOfChipsHeld > prevChipCount.current + 1) {
+      playSound("/sounds/steal_chips.wav");
+    }
+
+    prevChipCount.current = totalNumberOfChipsHeld;
+  }, [totalNumberOfChipsHeld]);
 
   return (
     <div
