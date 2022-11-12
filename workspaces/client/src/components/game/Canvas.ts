@@ -108,7 +108,7 @@ export default class Canvas {
     this.ctx.globalCompositeOperation = 'destination-out'
     // this.ctx.fillStyle = `rgba(0, 0, 0 ${force ? '' : ', 0.5'})`
     this.ctx.fillRect(0, 0, this.cw, this.ch)
-    this.ctx.globalCompositeOperation = 'lighter'
+    this.ctx.globalCompositeOperation = 'destination-over'
   }
 
   private _finish(): void {

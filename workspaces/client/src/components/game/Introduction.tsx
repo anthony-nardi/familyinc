@@ -6,6 +6,9 @@ import { emitEvent } from "@utils/analytics";
 import { TextInput, Button, Title, List } from "@mantine/core";
 import Canvas from "./Canvas";
 import random from "../../utils/random";
+
+let canvasRendered = false;
+
 export default function Introduction() {
   const router = useRouter();
   const { sm } = useSocketManager();
@@ -37,14 +40,15 @@ export default function Introduction() {
       chip9Ref,
       chip10Ref,
     ];
-    if (canvasContainerRef.current) {
+    if (canvasContainerRef.current && !canvasRendered) {
+      canvasRendered = true;
       const items = [];
 
       for (let i = 0; i < 25; i++) {
         const randomInt = Math.floor(random(1, refs.length));
-        const randomSpeedScale = random(0.4, 1.3);
+        const randomSpeedScale = random(0.6, 1.5);
         const randomX = random(0, canvasContainerRef.current.clientWidth);
-        const randomY = random(-200, 0);
+        const randomY = random(-1000, 0);
         console.log(randomSpeedScale);
         items.push({
           ref: refs[randomInt],
