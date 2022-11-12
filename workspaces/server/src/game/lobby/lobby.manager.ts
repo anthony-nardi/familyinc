@@ -17,10 +17,13 @@ export class LobbyManager {
 
   public initializeSocket(client: AuthenticatedSocket): void {
     client.data.lobby = null;
+    this.logger.log(client.id)
   }
 
   public terminateSocket(client: AuthenticatedSocket): void {
     client.data.lobby?.removeClient(client);
+    this.logger.log(client.id)
+
   }
 
   public createLobby(): Lobby {

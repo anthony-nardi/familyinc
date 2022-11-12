@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { GameModule } from './game/game.module';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { jwtModule } from './websocket/modules.config';
 
 @Module({
   imports: [
@@ -13,11 +14,11 @@ import { ScheduleModule } from '@nestjs/schedule';
       ],
     }),
     ScheduleModule.forRoot(),
+    jwtModule,
     GameModule,
   ],
   controllers: [AppController],
   providers: [],
 })
-export class AppModule
-{
+export class AppModule {
 }

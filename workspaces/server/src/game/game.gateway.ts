@@ -119,7 +119,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             isHost: false,
             isBot: true
           }
-        }) 
+        })
 
         this.lobbyManager.joinLobby(lobby.id, bot, bot.data.userName);
 
