@@ -47,7 +47,9 @@ export default class Things {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(this.ref.current, this.x, this.y, 40 * this.scale, 40 * this.scale);
+    if (this.y > -100) {
+      ctx.drawImage(this.ref.current, this.x, this.y, 40 * this.scale, 40 * this.scale);
+    }
   };
 
 

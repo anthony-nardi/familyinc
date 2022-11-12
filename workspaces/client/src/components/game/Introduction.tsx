@@ -9,6 +9,7 @@ import random from "../../utils/random";
 
 let canvasRendered = false;
 
+
 export default function Introduction() {
   const router = useRouter();
   const { sm } = useSocketManager();
@@ -26,6 +27,7 @@ export default function Introduction() {
   const chip9Ref = useRef(null);
   const chip10Ref = useRef(null);
   const diamondRef = useRef(null);
+  const theCanvas = useRef(null)
 
   useEffect(() => {
     const refs = [
@@ -40,13 +42,13 @@ export default function Introduction() {
       chip9Ref,
       chip10Ref,
     ];
-    if (canvasContainerRef.current && !canvasRendered) {
+
+    if (canvasContainerRef.current) {
       canvasRendered = true;
       const items = [];
       // @ts-expect-error ignore
 
       const contentRect = appContainerRef.current.getBoundingClientRect()
-      console.log(contentRect)
 
       const leftZone = [0, contentRect.left]
       // @ts-expect-error ignore
@@ -91,13 +93,25 @@ export default function Introduction() {
           scale: randomSpeedScale,
         })
       }
-      const theCanvas = new Canvas(canvasContainerRef.current, {
+      const theCanvasToSet = new Canvas(canvasContainerRef.current, {
         items,
       });
 
-      theCanvas.start();
+      // @ts-expect-error todo foigure oiuyt
+      theCanvas.current = theCanvasToSet
+
+      theCanvasToSet.start();
     }
-  }, []);
+
+    return () => {
+      if (canvasRendered && theCanvas.current) {
+        // @ts-expect-error te
+        theCanvas.current.stop()
+        // @ts-expect-error te
+        theCanvas.current.destroy()
+      }
+    }
+  }, [canvasContainerRef.current]);
 
   const onJoinLobby = () => {
     sm.emit({
