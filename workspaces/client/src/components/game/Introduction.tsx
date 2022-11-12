@@ -3,23 +3,14 @@ import { ClientEvents } from "@familyinc/shared/client/ClientEvents";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { emitEvent } from "@utils/analytics";
-import { Divider, Select, TextInput, Button, Title, List } from "@mantine/core";
-import {
-  Chip1,
-  Chip2,
-  Chip3,
-  Chip4,
-  Chip5,
-  Chip6,
-  Chip7,
-  Chip8,
-  Chip9,
-  Chip10,
-} from "@icons/index";
+import { TextInput, Button, Title, List } from "@mantine/core";
+import Canvas from "./Canvas";
+import random from "../../utils/random";
 export default function Introduction() {
   const router = useRouter();
   const { sm } = useSocketManager();
   const [userName, setUserName] = useState("");
+  const canvasContainerRef = useRef(null);
   const canvasRef = useRef(null);
   const chip1Ref = useRef(null);
   const chip2Ref = useRef(null);
@@ -31,40 +22,45 @@ export default function Introduction() {
   const chip8Ref = useRef(null);
   const chip9Ref = useRef(null);
   const chip10Ref = useRef(null);
-
-  const chip1RenderRef = useRef(0);
-  const chip2RenderRef = useRef(0);
-  const chip3RenderRef = useRef(0);
-  const chip4RenderRef = useRef(0);
-  const chip5RenderRef = useRef(0);
-  const chip6RenderRef = useRef(0);
-  const chip7RenderRef = useRef(0);
-  const chip8RenderRef = useRef(0);
-  const chip9RenderRef = useRef(0);
-  const chip10RenderRef = useRef(0);
-
-  const draw = (ctx) => {
-    ctx.fillStyle = "#000000";
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.drawImage(chip1Ref.current, 500, chip1RenderRef.current, 40, 40);
-    chip1RenderRef.current = chip1RenderRef.current + 1;
-  };
+  const diamondRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    let animationFrameId;
+    const refs = [
+      chip1Ref,
+      chip2Ref,
+      chip3Ref,
+      chip4Ref,
+      chip5Ref,
+      chip6Ref,
+      chip7Ref,
+      chip8Ref,
+      chip9Ref,
+      chip10Ref,
+    ];
+    if (canvasContainerRef.current) {
+      const items = [];
 
-    const render = () => {
-      draw(context);
-      animationFrameId = window.requestAnimationFrame(render);
-    };
-    render();
+      for (let i = 0; i < 25; i++) {
+        const randomInt = Math.floor(random(1, refs.length));
+        const randomSpeedScale = random(0.4, 1.3);
+        const randomX = random(0, canvasContainerRef.current.clientWidth);
+        const randomY = random(-200, 0);
+        console.log(randomSpeedScale);
+        items.push({
+          ref: refs[randomInt],
+          x: randomX,
+          y: randomY,
+          speed: randomSpeedScale,
+          scale: randomSpeedScale,
+        });
+      }
+      const theCanvas = new Canvas(canvasContainerRef.current, {
+        items,
+      });
 
-    return () => {
-      window.cancelAnimationFrame(animationFrameId);
-    };
-  }, [draw]);
+      theCanvas.start();
+    }
+  }, []);
 
   const onJoinLobby = () => {
     sm.emit({
@@ -168,14 +164,7 @@ export default function Introduction() {
           </div>
         </div>
       </div>
-      <div className="canvas-container">
-        <canvas
-          id="canvas"
-          ref={canvasRef}
-          width={typeof window !== "undefined" ? window.innerWidth : 0}
-          height={typeof window !== "undefined" ? window.innerHeight : 0}
-        />
-      </div>
+      <div className="canvas-container" ref={canvasContainerRef}></div>
       <div className="canvas-images">
         <img src={"/chip-1.png"} width="40" height="40" ref={chip1Ref} />
         <img src={"/chip-2.png"} width="40" height="40" ref={chip2Ref} />
@@ -187,6 +176,7 @@ export default function Introduction() {
         <img src={"/chip-8.png"} width="40" height="40" ref={chip8Ref} />
         <img src={"/chip-9.png"} width="40" height="40" ref={chip9Ref} />
         <img src={"/chip-10.png"} width="40" height="40" ref={chip10Ref} />
+        <img src={"/diamond.png"} width="40" height="40" ref={diamondRef} />
       </div>
     </div>
   );
