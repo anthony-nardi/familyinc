@@ -1,5 +1,4 @@
-export enum ServerEvents
-{
+export enum ServerEvents {
   // General
   Pong = 'server.pong',
 
@@ -8,4 +7,5 @@ export enum ServerEvents
 
   // Game
   GameMessage = 'server.game.message',
+  GameSound = 'server.game.sound'
 }
