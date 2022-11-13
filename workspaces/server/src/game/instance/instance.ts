@@ -66,7 +66,9 @@ export class Instance {
 
     const currentPlayerClient = clients.get(this.currentPlayer)
     if (currentPlayerClient && currentPlayerClient.data.isBot) {
-      this.makeBotTurn(currentPlayerClient as Bot)
+      setTimeout(() => {
+        this.makeBotTurn(currentPlayerClient as Bot)
+      }, 2000)
     }
 
   }
@@ -237,7 +239,9 @@ export class Instance {
 
     const currentPlayerClient = this.lobby.clients.get(this.currentPlayer)
     if (currentPlayerClient && currentPlayerClient.data.isBot && !(currentPlayerClient instanceof Socket)) {
-      this.makeBotTurn(currentPlayerClient)
+      setTimeout(() => {
+        this.makeBotTurn(currentPlayerClient)
+      }, 2000)
     }
 
     this.lobby.dispatchLobbyState();
