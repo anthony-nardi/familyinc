@@ -1,6 +1,6 @@
 import useSocketManager from "@hooks/useSocketManager";
 import { ClientEvents } from "@familyinc/shared/client/ClientEvents";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import { emitEvent } from "@utils/analytics";
 import { TextInput, Button, Title, List } from "@mantine/core";
@@ -42,8 +42,14 @@ export default function Introduction() {
       chip9Ref,
       chip10Ref,
     ];
-
-    if (canvasContainerRef.current) {
+    if (
+      navigator.userAgent.match(/Android/i) ||
+      navigator.userAgent.match(/iPhone/i)
+    ) {
+      return
+    }
+    console.log('RUN')
+    if (canvasContainerRef.current && !canvasRendered) {
       canvasRendered = true;
       const items = [];
       // @ts-expect-error ignore
@@ -111,7 +117,7 @@ export default function Introduction() {
         theCanvas.current.destroy()
       }
     }
-  }, [canvasContainerRef.current]);
+  }, []);
 
   const onJoinLobby = () => {
     sm.emit({
@@ -134,6 +140,8 @@ export default function Introduction() {
     emitEvent("lobby_create");
   };
 
+  const handleSetUserName = useCallback((event: any) => setUserName(event.currentTarget.value), [])
+
   return (
     <div className="mt-4 mx-auto max-w-5xl flex" ref={appContainerRef}>
       <div className="basis-1/2">
@@ -144,7 +152,7 @@ export default function Introduction() {
         <TextInput
           className="max-w-sm"
           label="Username"
-          onChange={(event) => setUserName(event.currentTarget.value)}
+          onChange={handleSetUserName}
         />
 
         <div className="mt-5 text-center flex justify-between">
