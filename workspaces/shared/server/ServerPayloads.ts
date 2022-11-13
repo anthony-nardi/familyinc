@@ -30,6 +30,9 @@ export type ServerPayloads = {
   [ServerEvents.GameMessage]: {
     message: string;
     color: Color;
-    sound?: string;
   };
+
+  [ServerEvents.GameSound]: {
+    sound: string
+  }
 };

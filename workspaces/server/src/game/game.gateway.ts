@@ -119,7 +119,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             isHost: false,
             isBot: true
           }
-        }) 
+        })
 
         this.lobbyManager.joinLobby(lobby.id, bot, bot.data.userName);
 
@@ -153,5 +153,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       throw new ServerException(SocketExceptions.GameError, 'Only the current player may pass the turn.')
     }
     lobby.instance.passTurn(client)
+    lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameSound]>(ServerEvents.GameSound, {
+      sound: 'pass_turn'
+    });
   }
 }

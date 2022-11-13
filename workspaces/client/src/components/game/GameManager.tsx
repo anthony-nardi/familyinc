@@ -50,19 +50,28 @@ export default function GameManager() {
         color,
         autoClose: 6000,
       });
+    };
 
+    const onGameSound: Listener<ServerPayloads[ServerEvents.GameSound]> = ({
+      sound
+    }: {
+      sound: string
+    }) => {
       if (sound === 'bust') {
-        console.log('bust sound.')
         playSound('/sounds/bust.mp3')
       }
-    };
+      if (sound === 'pass_turn') {
+        playSound('/sounds/pass_turn.wav')
+      }
+    }
 
     sm.registerListener(ServerEvents.LobbyState, onLobbyState);
     sm.registerListener(ServerEvents.GameMessage, onGameMessage);
-
+    sm.registerListener(ServerEvents.GameSound, onGameSound)
     return () => {
       sm.removeListener(ServerEvents.LobbyState, onLobbyState);
       sm.removeListener(ServerEvents.GameMessage, onGameMessage);
+      sm.removeListener(ServerEvents.GameSound, onGameSound)
     };
   }, []);
 

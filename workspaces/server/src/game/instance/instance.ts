@@ -172,6 +172,8 @@ export class Instance {
         this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(ServerEvents.GameMessage, {
           color: 'yellow',
           message: `${client.data.userName} has busted after drawing a ${chipDrawn}! No diamond given.`,
+        });
+        this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameSound]>(ServerEvents.GameSound, {
           sound: 'bust'
         });
         this.passTurn(client)
