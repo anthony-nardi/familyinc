@@ -6,7 +6,8 @@ import { Badge, LoadingOverlay, Overlay, Button, Select } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { emitEvent } from "@utils/analytics";
 import { PlayersOverview } from "./PlayersOverview";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { playSound } from '../../utils/sound'
 
 export default function Game() {
   const { sm } = useSocketManager();
@@ -28,6 +29,12 @@ export default function Game() {
 
     emitEvent("lobby_create");
   };
+
+  useEffect(() => {
+    if (currentLobbyState.winner) {
+      playSound("/sounds/win.mp3");
+    }
+  }, [currentLobbyState.winner]);
 
   const copyLobbyLink = async () => {
     const link = `${window.location.origin}?lobby=${currentLobbyState.lobbyId}`;
