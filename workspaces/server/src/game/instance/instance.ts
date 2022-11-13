@@ -79,6 +79,9 @@ export class Instance {
 
     if (shouldBotPass) {
       this.passTurn(client)
+      this.lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameSound]>(ServerEvents.GameSound, {
+        sound: 'pass_turn'
+      });
     } else {
       this.drawChip(client)
     }
