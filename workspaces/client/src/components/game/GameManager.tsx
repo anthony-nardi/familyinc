@@ -9,6 +9,7 @@ import Introduction from "@components/game/Introduction";
 import Game from "@components/game/Game";
 import { useRouter } from "next/router";
 import { showNotification } from "@mantine/notifications";
+import { playSound } from "@utils/sound";
 
 export default function GameManager() {
   const router = useRouter();
@@ -38,15 +39,22 @@ export default function GameManager() {
     const onGameMessage: Listener<ServerPayloads[ServerEvents.GameMessage]> = ({
       color,
       message,
+      sound
     }: {
       color: any;
       message: string;
+      sound?: string
     }) => {
       showNotification({
         message,
         color,
         autoClose: 6000,
       });
+
+      if (sound === 'bust') {
+        console.log('bust sound.')
+        playSound('/sounds/bust.mp3')
+      }
     };
 
     sm.registerListener(ServerEvents.LobbyState, onLobbyState);
