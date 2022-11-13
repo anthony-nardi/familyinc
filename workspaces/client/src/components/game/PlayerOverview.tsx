@@ -35,12 +35,12 @@ export default function PlayerOverview({
 
   const totalNumberOfChipsHeld: number = chips
     ? (Object.values(chips).reduce(
-        // @ts-expect-error figure out
-        (sum: number, count: number) => {
-          return sum + count;
-        },
-        0
-      ) as number)
+      // @ts-expect-error figure out
+      (sum: number, count: number) => {
+        return sum + count;
+      },
+      0
+    ) as number)
     : 0;
 
   useEffect(() => {
@@ -54,11 +54,11 @@ export default function PlayerOverview({
       totalNumberOfChipsHeld === prevChipCount.current + 1 ||
       totalNumberOfChipsHeld === 1
     ) {
-      playSound("/sounds/draw_chip.wav");
+      playSound("/sounds/draw_chip.mp3");
     }
 
     if (totalNumberOfChipsHeld > prevChipCount.current + 1) {
-      playSound("/sounds/steal_chips.wav");
+      playSound("/sounds/steal_chips.mp3");
     }
 
     prevChipCount.current = totalNumberOfChipsHeld;
