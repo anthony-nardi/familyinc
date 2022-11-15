@@ -6,8 +6,13 @@ import { Badge, LoadingOverlay, Overlay, Button, Select } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { emitEvent } from "@utils/analytics";
 import { PlayersOverview } from "./PlayersOverview";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { playSound } from '../../utils/sound'
+import Chip from "./Chip";
+import styled from 'styled-components'
+import { CSSTransition } from 'react-transition-group';
+import AnimatedChips from './AnimatedChips'
+
 
 export default function Game() {
   const { sm } = useSocketManager();
@@ -19,6 +24,7 @@ export default function Game() {
     currentLobbyState.clients[currentLobbyState.currentPlayer] &&
     currentLobbyState.clients[currentLobbyState.currentPlayer].userName;
   const [selectedBotValue, setBotValue] = useState("0");
+
   const onReplay = () => {
     sm.emit({
       event: ClientEvents.LobbyCreate,
@@ -178,6 +184,7 @@ export default function Game() {
         currentPlayer={currentLobbyState.currentPlayer}
         myClientId={clientId}
       />
+      <AnimatedChips />
     </div>
   );
 }

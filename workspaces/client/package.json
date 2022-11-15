@@ -18,8 +18,10 @@
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-toastify": "^9.0.1",
+    "react-transition-group": "^4.4.5",
     "recoil": "^0.7.3-alpha.2",
-    "socket.io-client": "^4.5.1"
+    "socket.io-client": "^4.5.1",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@types/gtag.js": "^0.0.10",

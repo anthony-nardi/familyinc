@@ -13,7 +13,7 @@ import '@styles/main.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function _App(props: AppProps) {
-  const {Component, pageProps} = props;
+  const { Component, pageProps } = props;
   const router = useRouter();
 
   useEffect(() => {
@@ -28,8 +28,8 @@ export default function _App(props: AppProps) {
     <RecoilRoot>
       <Head>
         <title>Family Inc</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width"/>
-        <meta name="description" content="Family Inc Game"/>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <meta name="description" content="Family Inc Game" />
       </Head>
 
       <Script

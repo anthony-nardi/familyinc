@@ -78,7 +78,7 @@ export default function PlayerOverview({
       <div>
         <Diamonds count={diamonds} />
       </div>
-      <div className="chips">
+      <div className={`chips chips-${userName}`}>
         {chips &&
           Object.entries(chips).map(([chipValue, chipCount], index) => {
             return (
