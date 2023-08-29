@@ -24,6 +24,7 @@ export default function Game() {
     currentLobbyState.clients[currentLobbyState.currentPlayer] &&
     currentLobbyState.clients[currentLobbyState.currentPlayer].userName;
   const [selectedBotValue, setBotValue] = useState("0");
+  const [isAnimating, setIsAnimating] = useState(false)
 
   const onReplay = () => {
     sm.emit({

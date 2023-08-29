@@ -41,7 +41,7 @@ export default function Chip({
 
   for (let i = 0; i < chipCount; i++) {
     images.push(
-      <Image priority src={ImageMap[chipValue]} height="40" width="40" key={i} />
+      <Image priority src={ImageMap[chipValue]} height="40" width="40" key={i} className={`chip-image-${chipValue}`} />
     );
   }
   return <>{images}</>;
