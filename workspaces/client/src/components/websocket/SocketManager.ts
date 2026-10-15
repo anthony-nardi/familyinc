@@ -1,11 +1,11 @@
-import { SocketState } from '@components/websocket/SocketState';
+import type { SocketState } from '@components/state/AppStateContext';
 import { Listener } from '@components/websocket/types';
 import { ClientEvents } from '@familyinc/shared/client/ClientEvents';
 import { ServerEvents } from '@familyinc/shared/server/ServerEvents';
 import { ServerExceptionResponse } from '@familyinc/shared/server/types';
-import { SetterOrUpdater } from 'recoil';
+import type { Dispatch, SetStateAction } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { showNotification } from '@mantine/notifications';
+import { notifications } from '@mantine/notifications';
 
 type EmitOptions<T> = {
   event: ClientEvents;
@@ -15,7 +15,7 @@ type EmitOptions<T> = {
 export default class SocketManager {
   public readonly socket: Socket;
 
-  public setSocketState: SetterOrUpdater<SocketState>;
+  public setSocketState: Dispatch<SetStateAction<SocketState>> = () => {};
 
   private connectionLost: boolean = false;
 
@@ -43,7 +43,7 @@ export default class SocketManager {
       return null;
     }
 
-    return this.socket.id;
+    return this.socket.id ?? null;
   }
 
   connect(): void {
@@ -69,7 +69,7 @@ export default class SocketManager {
   private onConnect(): void {
     this.socket.on('connect', () => {
       if (this.connectionLost) {
-        showNotification({
+        notifications.show({
           message: 'Reconnected to server!',
           color: 'green',
           autoClose: 2000,
@@ -82,7 +82,7 @@ export default class SocketManager {
   private onDisconnect(): void {
     this.socket.on('disconnect', async (reason: Socket.DisconnectReason) => {
       if (reason === 'io client disconnect') {
-        showNotification({
+        notifications.show({
           message: 'Disconnected successfully!',
           color: 'green',
           autoClose: 2000,
@@ -90,7 +90,7 @@ export default class SocketManager {
       }
 
       if (reason === 'io server disconnect') {
-        showNotification({
+        notifications.show({
           message: 'You got disconnect by server',
           color: 'orange',
           autoClose: 3000,
@@ -98,7 +98,7 @@ export default class SocketManager {
       }
 
       if (reason === 'ping timeout' || reason === 'transport close' || reason === 'transport error') {
-        showNotification({
+        notifications.show({
           message: 'Connection lost to the server',
           color: 'orange',
           autoClose: 3000,
@@ -115,7 +115,7 @@ export default class SocketManager {
   private onException(): void {
     this.socket.on('exception', (data: ServerExceptionResponse) => {
       if (typeof data.exception === 'undefined') {
-        showNotification({
+        notifications.show({
           message: 'Unexpected error from server',
           color: 'red',
         });
@@ -133,7 +133,7 @@ export default class SocketManager {
         }
       }
 
-      showNotification({
+      notifications.show({
         message: body,
         color: 'red',
       });

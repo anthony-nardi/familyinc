@@ -1,2 +1,15 @@
 /node_modules
+**/node_modules
 /.idea
+
+# Yarn 4 keeps its cache globally; only the release and lockfile are committed.
+.yarn/cache
+.yarn/install-state.gz
+.yarn/unplugged
+.yarn/build-state.yml
+.pnp.*
+
+# build output
+**/.next
+**/dist
+**/coverage

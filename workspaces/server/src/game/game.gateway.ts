@@ -10,12 +10,13 @@ import { Server, Socket } from 'socket.io';
 import { ClientEvents } from '@shared/client/ClientEvents';
 import { ServerEvents } from '@shared/server/ServerEvents';
 import { LobbyManager } from '@app/game/lobby/lobby.manager';
+import { Lobby } from '@app/game/lobby/lobby';
 import { Logger, UsePipes } from '@nestjs/common';
 import { AuthenticatedSocket } from '@app/game/types';
 import { ServerException } from '@app/game/server.exception';
 import { SocketExceptions } from '@shared/server/SocketExceptions';
 import { ServerPayloads } from '@shared/server/ServerPayloads';
-import { LobbyCreateDto, LobbyJoinDto, } from '@app/game/dtos';
+import { LobbyCreateDto, LobbyJoinDto } from '@app/game/dtos';
 import { WsValidationPipe } from '@app/websocket/ws.validation-pipe';
 import { SimpleBot } from '@app/game/bots/SimpleBot';
 import { CarefulBot } from '@app/game/bots/CarefulBot';
@@ -30,31 +31,31 @@ const botGenerationOrder = [
   RiskyBot,
   RuthlessBot,
   StealyBot,
-  RandomBot
-]
-
+  RandomBot,
+];
 
 @UsePipes(new WsValidationPipe())
 @WebSocketGateway()
-export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class GameGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   private readonly logger: Logger = new Logger(GameGateway.name);
 
-  constructor(
-    private readonly lobbyManager: LobbyManager,
-  ) {
-  }
+  constructor(private readonly lobbyManager: LobbyManager) {}
 
   private isHost(client: AuthenticatedSocket): boolean {
-    return client.data.isHost && client.id === client.data.lobby?.instance.hostId
+    return (
+      client.data.isHost && client.id === client.data.lobby?.instance.hostId
+    );
   }
 
   afterInit(server: Server): any {
     // Pass server instance to managers
     this.lobbyManager.server = server;
-    this.lobbyManager.logger = this.logger
+    this.lobbyManager.logger = this.logger;
   }
 
-  async handleConnection(client: Socket, ...args: any[]): Promise<void> {
+  async handleConnection(client: Socket): Promise<void> {
     // Call initializers to set up socket
     this.lobbyManager.initializeSocket(client as AuthenticatedSocket);
   }
@@ -72,7 +73,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage(ClientEvents.LobbyCreate)
-  onLobbyCreate(client: AuthenticatedSocket, data: LobbyCreateDto): WsResponse<ServerPayloads[ServerEvents.GameMessage]> {
+  onLobbyCreate(
+    client: AuthenticatedSocket,
+    data: LobbyCreateDto,
+  ): WsResponse<ServerPayloads[ServerEvents.GameMessage]> {
     const lobby = this.lobbyManager.createLobby();
     lobby.addClient(client, data.userName);
 
@@ -97,64 +101,87 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage(ClientEvents.StartGame)
   onStartGame(client: AuthenticatedSocket, data: { bots: number }): void {
-    const lobby = client.data.lobby
+    const lobby: Lobby | null = client.data.lobby;
     if (!lobby) {
-      throw new ServerException(SocketExceptions.LobbyError, 'You are not in a lobby');
+      throw new ServerException(
+        SocketExceptions.LobbyError,
+        'You are not in a lobby',
+      );
     }
     if (!this.isHost(client)) {
-      throw new ServerException(SocketExceptions.GameError, 'Only the host can start the game.')
+      throw new ServerException(
+        SocketExceptions.GameError,
+        'Only the host can start the game.',
+      );
     }
     if (lobby.clients.size <= 1 && !data.bots) {
-      throw new ServerException(SocketExceptions.GameError, 'The game needs more than 1 player to start.')
+      throw new ServerException(
+        SocketExceptions.GameError,
+        'The game needs more than 1 player to start.',
+      );
     }
 
     if (data.bots) {
       for (let i = 0; i < data.bots; i++) {
-        const BotType = botGenerationOrder[i]
+        const BotType = botGenerationOrder[i];
         const bot = new BotType({
           id: `bot_${i}`,
           data: {
             lobby,
             color: 'red',
             isHost: false,
-            isBot: true
-          }
-        })
+            isBot: true,
+          },
+        });
 
         this.lobbyManager.joinLobby(lobby.id, bot, bot.data.userName);
-
       }
     }
 
-    lobby.instance.triggerStart(lobby.clients)
+    lobby.instance.triggerStart(lobby.clients);
   }
 
   @SubscribeMessage(ClientEvents.DrawChip)
   onDrawChip(client: AuthenticatedSocket): void {
-    const lobby = client.data.lobby
+    const lobby: Lobby | null = client.data.lobby;
     if (!lobby) {
-      throw new ServerException(SocketExceptions.LobbyError, 'You are not in a lobby');
+      throw new ServerException(
+        SocketExceptions.LobbyError,
+        'You are not in a lobby',
+      );
     }
 
     if (client.id !== lobby.instance.currentPlayer) {
-      throw new ServerException(SocketExceptions.GameError, 'Only the current player may draw a chip.')
+      throw new ServerException(
+        SocketExceptions.GameError,
+        'Only the current player may draw a chip.',
+      );
     }
 
-    lobby.instance.drawChip(client)
+    lobby.instance.drawChip(client);
   }
 
   @SubscribeMessage(ClientEvents.PassTurn)
   onPassTurn(client: AuthenticatedSocket): void {
-    const lobby = client.data.lobby
+    const lobby: Lobby | null = client.data.lobby;
     if (!lobby) {
-      throw new ServerException(SocketExceptions.LobbyError, 'You are not in a lobby');
+      throw new ServerException(
+        SocketExceptions.LobbyError,
+        'You are not in a lobby',
+      );
     }
     if (client.id !== lobby.instance.currentPlayer) {
-      throw new ServerException(SocketExceptions.GameError, 'Only the current player may pass the turn.')
+      throw new ServerException(
+        SocketExceptions.GameError,
+        'Only the current player may pass the turn.',
+      );
     }
-    lobby.instance.passTurn(client)
-    lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameSound]>(ServerEvents.GameSound, {
-      sound: 'pass_turn'
-    });
+    lobby.instance.passTurn(client);
+    lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameSound]>(
+      ServerEvents.GameSound,
+      {
+        sound: 'pass_turn',
+      },
+    );
   }
 }

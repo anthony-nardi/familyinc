@@ -3,18 +3,17 @@ import { useEffect } from "react";
 import { Listener } from "@components/websocket/types";
 import { ServerEvents } from "@familyinc/shared/server/ServerEvents";
 import { ServerPayloads } from "@familyinc/shared/server/ServerPayloads";
-import { useRecoilState } from "recoil";
-import { CurrentLobbyState } from "@components/game/states";
+import useAppState from "@hooks/useAppState";
 import Introduction from "@components/game/Introduction";
 import Game from "@components/game/Game";
 import { useRouter } from "next/router";
-import { showNotification } from "@mantine/notifications";
+import { notifications } from "@mantine/notifications";
 import { playSound } from "@utils/sound";
 
 export default function GameManager() {
   const router = useRouter();
   const { sm } = useSocketManager();
-  const [lobbyState, setLobbyState] = useRecoilState(CurrentLobbyState);
+  const { lobbyState, setLobbyState } = useAppState();
 
   useEffect(() => {
     sm.connect();
@@ -39,13 +38,11 @@ export default function GameManager() {
     const onGameMessage: Listener<ServerPayloads[ServerEvents.GameMessage]> = ({
       color,
       message,
-      sound
     }: {
       color: any;
       message: string;
-      sound?: string
     }) => {
-      showNotification({
+      notifications.show({
         message,
         color,
         autoClose: 6000,
@@ -73,6 +70,8 @@ export default function GameManager() {
       sm.removeListener(ServerEvents.GameMessage, onGameMessage);
       sm.removeListener(ServerEvents.GameSound, onGameSound)
     };
+    // Connect and subscribe once on mount; the socket manager is a singleton.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (lobbyState === null) {

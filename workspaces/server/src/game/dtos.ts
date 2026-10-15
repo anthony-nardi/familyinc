@@ -1,16 +1,14 @@
-import { IsInt, IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsString } from 'class-validator';
 
-export class LobbyCreateDto
-{
+export class LobbyCreateDto {
   @IsString()
-  userName: string
+  userName: string;
 }
 
-export class LobbyJoinDto
-{
+export class LobbyJoinDto {
   @IsString()
   lobbyId: string;
 
   @IsString()
-  userName: string
+  userName: string;
 }

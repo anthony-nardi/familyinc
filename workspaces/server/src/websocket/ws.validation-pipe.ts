@@ -3,13 +3,14 @@ import { ServerException } from '@app/game/server.exception';
 import { SocketExceptions } from '@shared/server/SocketExceptions';
 
 @Injectable()
-export class WsValidationPipe extends ValidationPipe
-{
-  createExceptionFactory()
-  {
+export class WsValidationPipe extends ValidationPipe {
+  createExceptionFactory() {
     return (validationErrors = []) => {
       if (this.isDetailedOutputDisabled) {
-        return new ServerException(SocketExceptions.UnexpectedError, 'Bad request');
+        return new ServerException(
+          SocketExceptions.UnexpectedError,
+          'Bad request',
+        );
       }
 
       const errors = this.flattenValidationErrors(validationErrors);

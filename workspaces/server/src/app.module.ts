@@ -7,10 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [
-        '.env.local',
-        '.env',
-      ],
+      envFilePath: ['.env.local', '.env'],
     }),
     ScheduleModule.forRoot(),
     GameModule,
@@ -18,6 +15,4 @@ import { ScheduleModule } from '@nestjs/schedule';
   controllers: [AppController],
   providers: [],
 })
-export class AppModule
-{
-}
+export class AppModule {}

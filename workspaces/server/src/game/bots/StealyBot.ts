@@ -1,8 +1,8 @@
-import { Bot } from '@app/game/bots/bot'
-import { getPlayersHeldChips } from '@app/game/instance/utils'
+import { Bot } from '@app/game/bots/bot';
+import { getPlayersHeldChips } from '@app/game/instance/utils';
 import { Lobby } from '@app/game/lobby/lobby';
-import { ChipsHeld,  } from '@app/game/types'
-import {ChipValues} from '@familyinc/shared/common/GameState'
+import { ChipsHeld } from '@app/game/types';
+import { ChipValues } from '@familyinc/shared/common/GameState';
 
 export class StealyBot implements Bot {
   public id: string;
@@ -12,10 +12,10 @@ export class StealyBot implements Bot {
     userName: string;
     isHost: boolean;
     isBot: boolean;
-  }
+  };
   constructor({
     id,
-    data
+    data,
   }: {
     id: string;
     data: {
@@ -24,13 +24,13 @@ export class StealyBot implements Bot {
       userName?: string;
       isHost: boolean;
       isBot: boolean;
-    }
+    };
   }) {
     this.id = id;
     this.data = {
       ...data,
-      userName: 'Stealy'
-    }
+      userName: 'Stealy',
+    };
   }
 
   shouldPassTurn(chipsHeld: ChipsHeld) {
@@ -38,25 +38,26 @@ export class StealyBot implements Bot {
     let willSteal = false;
     let canSteal = false;
 
-    const currentPlayersHeldChips = getPlayersHeldChips(chipsHeld, this.id)
-
+    const currentPlayersHeldChips = getPlayersHeldChips(chipsHeld, this.id);
 
     chipsHeld.forEach((values, clientId) => {
       if (clientId !== this.id) {
         for (let i = 0; i < currentPlayersHeldChips.length; i++) {
-          const chipValue: ChipValues = currentPlayersHeldChips[i] as ChipValues
+          const chipValue: ChipValues = currentPlayersHeldChips[
+            i
+          ] as ChipValues;
           if (values.get(chipValue)) {
             willSteal = true;
-          } 
+          }
         }
         if (!willSteal) {
-          const otherPlayerChipsHeld = getPlayersHeldChips(chipsHeld, clientId)
+          const otherPlayerChipsHeld = getPlayersHeldChips(chipsHeld, clientId);
           if (otherPlayerChipsHeld.length) {
-            canSteal = true
+            canSteal = true;
           }
         }
       }
-    })
+    });
 
     // Holding some chips and we cant steal
 
@@ -65,13 +66,13 @@ export class StealyBot implements Bot {
     }
 
     if (canSteal && !willSteal) {
-      shouldPass = currentPlayersHeldChips.length >= 5
+      shouldPass = currentPlayersHeldChips.length >= 5;
     }
 
     if (willSteal) {
-      shouldPass = true
+      shouldPass = true;
     }
 
-    return shouldPass
+    return shouldPass;
   }
 }

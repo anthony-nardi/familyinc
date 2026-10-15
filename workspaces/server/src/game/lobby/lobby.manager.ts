@@ -12,7 +12,10 @@ import { Bot } from '@app/game/bots/bot';
 export class LobbyManager {
   public server: Server;
 
-  private readonly lobbies: Map<Lobby['id'], Lobby> = new Map<Lobby['id'], Lobby>();
+  private readonly lobbies: Map<Lobby['id'], Lobby> = new Map<
+    Lobby['id'],
+    Lobby
+  >();
   public logger: any;
 
   public initializeSocket(client: AuthenticatedSocket): void {
@@ -29,7 +32,11 @@ export class LobbyManager {
     return lobby;
   }
 
-  public joinLobby(lobbyId: string, client: AuthenticatedSocket | Bot, userName: string): void {
+  public joinLobby(
+    lobbyId: string,
+    client: AuthenticatedSocket | Bot,
+    userName: string,
+  ): void {
     const lobby = this.lobbies.get(lobbyId);
 
     if (!lobby) {
@@ -37,7 +44,10 @@ export class LobbyManager {
     }
 
     if (lobby.clients.size >= lobby.maxClients) {
-      throw new ServerException(SocketExceptions.LobbyError, 'Lobby already full');
+      throw new ServerException(
+        SocketExceptions.LobbyError,
+        'Lobby already full',
+      );
     }
 
     lobby.addClient(client, userName);
@@ -46,16 +56,19 @@ export class LobbyManager {
   // Periodically clean up lobbies
   @Cron('*/5 * * * *')
   private lobbiesCleaner(): void {
-    for (const [lobbyId, lobby] of this.lobbies) {
-      const now = (new Date()).getTime();
+    for (const lobby of this.lobbies.values()) {
+      const now = new Date().getTime();
       const lobbyCreatedAt = lobby.createdAt.getTime();
       const lobbyLifetime = now - lobbyCreatedAt;
 
       if (lobbyLifetime > LOBBY_MAX_LIFETIME) {
-        lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(ServerEvents.GameMessage, {
-          color: 'blue',
-          message: 'Game timed out',
-        });
+        lobby.dispatchToLobby<ServerPayloads[ServerEvents.GameMessage]>(
+          ServerEvents.GameMessage,
+          {
+            color: 'blue',
+            message: 'Game timed out',
+          },
+        );
 
         lobby.instance.triggerFinish();
 

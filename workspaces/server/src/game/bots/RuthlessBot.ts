@@ -1,5 +1,5 @@
-import { Bot } from '@app/game/bots/bot'
-import { isPlayerHoldingMoreThan2Chips } from '@app/game/instance/utils'
+import { Bot } from '@app/game/bots/bot';
+import { isPlayerHoldingMoreThan2Chips } from '@app/game/instance/utils';
 import { Lobby } from '@app/game/lobby/lobby';
 
 export class RuthlessBot implements Bot {
@@ -10,10 +10,10 @@ export class RuthlessBot implements Bot {
     userName: string;
     isHost: boolean;
     isBot: boolean;
-  }
+  };
   constructor({
     id,
-    data
+    data,
   }: {
     id: string;
     data: {
@@ -22,17 +22,17 @@ export class RuthlessBot implements Bot {
       userName?: string;
       isHost: boolean;
       isBot: boolean;
-    }
+    };
   }) {
     this.id = id;
     this.data = {
       ...data,
-      userName: 'Ruthless'
-    }
+      userName: 'Ruthless',
+    };
   }
 
   shouldPassTurn(chipsHeld) {
-    const playChipsHeld = chipsHeld.get(this.id)
-    return isPlayerHoldingMoreThan2Chips(playChipsHeld)
+    const playChipsHeld = chipsHeld.get(this.id);
+    return isPlayerHoldingMoreThan2Chips(playChipsHeld);
   }
 }

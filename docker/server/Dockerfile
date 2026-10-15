@@ -1,10 +1,12 @@
-FROM node:16.13.0-alpine
+FROM node:22-alpine
+
+RUN corepack enable
 
 RUN mkdir -p /home
 WORKDIR /home
 
-COPY ./package.json ./
-COPY ./yarn.lock ./
+COPY ./package.json ./yarn.lock ./.yarnrc.yml ./
+COPY ./.yarn/releases ./.yarn/releases
 COPY ./workspaces/server ./workspaces/server
 COPY ./workspaces/shared ./workspaces/shared
 

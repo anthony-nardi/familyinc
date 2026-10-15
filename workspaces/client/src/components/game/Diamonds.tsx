@@ -9,7 +9,7 @@ export default function Diamonds({ count }: {count: number }) {
   const images = [];
 
   for (let i = 0; i < count; i++) {
-    images.push(<Image src={Diamond} height="40" width="40" key={i} />);
+    images.push(<Image src={Diamond} alt="diamond" height="40" width="40" key={i} />);
   }
 
 

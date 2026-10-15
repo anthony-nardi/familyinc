@@ -1,4 +1,3 @@
-import { time } from 'console'
 import CanvasItems from './CanvasItems'
 
 type Options = {
@@ -104,15 +103,14 @@ export default class Canvas {
     this.finishCallbacks.push(cb)
   }
 
-  private _clear(force = false): void {
+  private _clear(): void {
     this.ctx.globalCompositeOperation = 'destination-out'
-    // this.ctx.fillStyle = `rgba(0, 0, 0 ${force ? '' : ', 0.5'})`
     this.ctx.fillRect(0, 0, this.cw, this.ch)
     this.ctx.globalCompositeOperation = 'destination-over'
   }
 
   private _finish(): void {
-    this._clear(true)
+    this._clear()
     this.rafInterval = null
     this.finishCallbacks.forEach((cb) => cb())
   }

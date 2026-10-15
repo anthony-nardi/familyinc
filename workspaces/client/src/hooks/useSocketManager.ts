@@ -1,12 +1,11 @@
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { SocketManagerContext } from '@components/websocket/SocketManagerProvider';
-import SocketState from '@components/websocket/SocketState';
+import useAppState from '@hooks/useAppState';
 
 export default function useSocketManager() {
   const sm = useContext(SocketManagerContext);
-  const socket = useRecoilValue(SocketState);
+  const { socketState } = useAppState();
 
-  return {sm, socket};
+  return { sm, socket: socketState };
 }

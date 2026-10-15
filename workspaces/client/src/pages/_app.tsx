@@ -1,18 +1,30 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import Script from 'next/script';
-import { MantineProvider } from '@mantine/core';
-import { RecoilRoot } from 'recoil';
+import { createTheme, MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import { AppStateProvider } from '@components/state/AppStateProvider';
 import { SocketManagerProvider } from '@components/websocket/SocketManagerProvider';
-import { NotificationsProvider } from '@mantine/notifications';
 import { pageView } from '@utils/analytics';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import '@styles/main.css';
-import 'react-toastify/dist/ReactToastify.css';
 
-export default function _App(props: AppProps) {
+const theme = createTheme({
+  defaultRadius: 'xs',
+  radius: {
+    xs: '1px',
+    sm: '1px',
+    md: '1px',
+    lg: '1px',
+    xl: '1px',
+  },
+});
+
+export default function App(props: AppProps) {
   const {Component, pageProps} = props;
   const router = useRouter();
 
@@ -25,7 +37,7 @@ export default function _App(props: AppProps) {
   }, [router.events]);
 
   return (
-    <RecoilRoot>
+    <AppStateProvider>
       <Head>
         <title>Family Inc</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width"/>
@@ -45,7 +57,7 @@ export default function _App(props: AppProps) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-                      
+
             gtag('config', '${process.env.NEXT_PUBLIC_GA_TRACKING_ID}', {
               page_path: window.location.pathname,
             });
@@ -53,33 +65,12 @@ export default function _App(props: AppProps) {
         }}
       />
 
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        emotionOptions={{
-          key: 'mantine',
-          prepend: false,
-        }}
-        theme={{
-          colorScheme: 'dark',
-          radius: {
-            xs: 1,
-            sm: 1,
-            md: 1,
-            lg: 1,
-            xl: 1,
-          },
-        }}
-      >
-        <NotificationsProvider
-          position="top-right"
-          limit={15}
-        >
-          <SocketManagerProvider>
-            <Component {...pageProps} />
-          </SocketManagerProvider>
-        </NotificationsProvider>
+      <MantineProvider theme={theme} defaultColorScheme="dark">
+        <Notifications position="top-right" limit={15} />
+        <SocketManagerProvider>
+          <Component {...pageProps} />
+        </SocketManagerProvider>
       </MantineProvider>
-    </RecoilRoot>
+    </AppStateProvider>
   );
 }

@@ -103,7 +103,7 @@ export default function Introduction() {
         items,
       });
 
-      // @ts-expect-error todo foigure oiuyt
+      // @ts-expect-error the canvas ref is untyped
       theCanvas.current = theCanvasToSet
 
       theCanvasToSet.start();
@@ -111,9 +111,9 @@ export default function Introduction() {
 
     return () => {
       if (canvasRendered && theCanvas.current) {
-        // @ts-expect-error te
+        // @ts-expect-error the canvas ref is untyped
         theCanvas.current.stop()
-        // @ts-expect-error te
+        // @ts-expect-error the canvas ref is untyped
         theCanvas.current.destroy()
       }
     }
@@ -225,17 +225,17 @@ export default function Introduction() {
       </div>
       <div className="canvas-container" ref={canvasContainerRef}></div>
       <div className="canvas-images">
-        <img src={"/chip-1.png"} width="40" height="40" ref={chip1Ref} />
-        <img src={"/chip-2.png"} width="40" height="40" ref={chip2Ref} />
-        <img src={"/chip-3.png"} width="40" height="40" ref={chip3Ref} />
-        <img src={"/chip-4.png"} width="40" height="40" ref={chip4Ref} />
-        <img src={"/chip-5.png"} width="40" height="40" ref={chip5Ref} />
-        <img src={"/chip-6.png"} width="40" height="40" ref={chip6Ref} />
-        <img src={"/chip-7.png"} width="40" height="40" ref={chip7Ref} />
-        <img src={"/chip-8.png"} width="40" height="40" ref={chip8Ref} />
-        <img src={"/chip-9.png"} width="40" height="40" ref={chip9Ref} />
-        <img src={"/chip-10.png"} width="40" height="40" ref={chip10Ref} />
-        <img src={"/diamond.png"} width="40" height="40" ref={diamondRef} />
+        <img alt="" src={"/chip-1.png"} width="40" height="40" ref={chip1Ref} />
+        <img alt="" src={"/chip-2.png"} width="40" height="40" ref={chip2Ref} />
+        <img alt="" src={"/chip-3.png"} width="40" height="40" ref={chip3Ref} />
+        <img alt="" src={"/chip-4.png"} width="40" height="40" ref={chip4Ref} />
+        <img alt="" src={"/chip-5.png"} width="40" height="40" ref={chip5Ref} />
+        <img alt="" src={"/chip-6.png"} width="40" height="40" ref={chip6Ref} />
+        <img alt="" src={"/chip-7.png"} width="40" height="40" ref={chip7Ref} />
+        <img alt="" src={"/chip-8.png"} width="40" height="40" ref={chip8Ref} />
+        <img alt="" src={"/chip-9.png"} width="40" height="40" ref={chip9Ref} />
+        <img alt="" src={"/chip-10.png"} width="40" height="40" ref={chip10Ref} />
+        <img alt="" src={"/diamond.png"} width="40" height="40" ref={diamondRef} />
       </div>
     </div>
   );

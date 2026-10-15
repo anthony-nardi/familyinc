@@ -1,9 +1,8 @@
 import { ClientEvents } from "@familyinc/shared/client/ClientEvents";
 import useSocketManager from "@hooks/useSocketManager";
-import { useRecoilValue } from "recoil";
-import { CurrentLobbyState } from "@components/game/states";
+import useAppState from "@hooks/useAppState";
 import { Badge, LoadingOverlay, Overlay, Button, Select } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
+import { notifications } from "@mantine/notifications";
 import { emitEvent } from "@utils/analytics";
 import { PlayersOverview } from "./PlayersOverview";
 import { useState, useEffect } from "react";
@@ -11,7 +10,7 @@ import { playSound } from '../../utils/sound'
 
 export default function Game() {
   const { sm } = useSocketManager();
-  const currentLobbyState = useRecoilValue(CurrentLobbyState)!;
+  const currentLobbyState = useAppState().lobbyState!;
   const clientId = sm.getSocketId()!;
   const isHost = currentLobbyState.hostId === clientId;
   const currentPlayer =
@@ -40,7 +39,7 @@ export default function Game() {
     const link = `${window.location.origin}?lobby=${currentLobbyState.lobbyId}`;
     await navigator.clipboard.writeText(link);
 
-    showNotification({
+    notifications.show({
       message: "Link copied to clipboard!",
       color: "green",
     });
@@ -107,7 +106,7 @@ export default function Game() {
 
       <div className="grid grid-cols-7 gap-4 relative select-none">
         {currentLobbyState.hasFinished && (
-          <Overlay opacity={0.6} color="#000" blur={2} zIndex={5} />
+          <Overlay backgroundOpacity={0.6} color="#000" blur={2} zIndex={5} />
         )}
         <LoadingOverlay visible={!currentLobbyState.hasStarted} />
       </div>

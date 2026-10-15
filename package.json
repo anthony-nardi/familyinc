@@ -4,18 +4,21 @@
   "version": "1.0.0",
   "author": "Anthony Nardi",
   "license": "MIT",
-  "workspaces": {
-    "packages": [
-      "workspaces/*"
-    ]
+  "packageManager": "yarn@4.18.1",
+  "workspaces": [
+    "workspaces/*"
+  ],
+  "engines": {
+    "node": ">=22"
   },
   "scripts": {
     "start:dev:client": "yarn workspace @familyinc/client start:dev",
     "start:dev:server": "yarn workspace @familyinc/server start:dev",
     "start:prod:client": "yarn workspace @familyinc/client start:prod",
-    "start:prod:server": "yarn workspace @familyinc/server start:prod"
-  },
-  "engines": {
-    "node": "16.17.x"
+    "start:prod:server": "yarn workspace @familyinc/server start:prod",
+    "build": "yarn workspace @familyinc/server build && yarn workspace @familyinc/client build",
+    "lint": "yarn workspace @familyinc/server lint && yarn workspace @familyinc/client lint",
+    "typecheck": "yarn workspace @familyinc/server typecheck && yarn workspace @familyinc/client typecheck",
+    "test": "yarn workspace @familyinc/server test"
   }
 }

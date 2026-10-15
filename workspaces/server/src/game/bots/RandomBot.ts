@@ -1,8 +1,8 @@
-import { Bot } from '@app/game/bots/bot'
-import { getPlayersHeldChips } from '@app/game/instance/utils'
+import { Bot } from '@app/game/bots/bot';
+import { getPlayersHeldChips } from '@app/game/instance/utils';
 import { Lobby } from '@app/game/lobby/lobby';
-import { ChipsHeld,  } from '@app/game/types'
-import {ChipValues} from '@familyinc/shared/common/GameState'
+import { ChipsHeld } from '@app/game/types';
+import { ChipValues } from '@familyinc/shared/common/GameState';
 
 export class RandomBot implements Bot {
   public id: string;
@@ -12,10 +12,10 @@ export class RandomBot implements Bot {
     userName: string;
     isHost: boolean;
     isBot: boolean;
-  }
+  };
   constructor({
     id,
-    data
+    data,
   }: {
     id: string;
     data: {
@@ -24,13 +24,13 @@ export class RandomBot implements Bot {
       userName?: string;
       isHost: boolean;
       isBot: boolean;
-    }
+    };
   }) {
     this.id = id;
     this.data = {
       ...data,
-      userName: 'Random'
-    }
+      userName: 'Random',
+    };
   }
 
   shouldPassTurn(chipsHeld: ChipsHeld) {
@@ -38,32 +38,32 @@ export class RandomBot implements Bot {
     let willSteal = false;
     let canSteal = false;
 
-    const currentPlayersHeldChips = getPlayersHeldChips(chipsHeld, this.id)
-
+    const currentPlayersHeldChips = getPlayersHeldChips(chipsHeld, this.id);
 
     chipsHeld.forEach((values, clientId) => {
       if (clientId !== this.id) {
         for (let i = 0; i < currentPlayersHeldChips.length; i++) {
-          const chipValue: ChipValues = currentPlayersHeldChips[i] as ChipValues
+          const chipValue: ChipValues = currentPlayersHeldChips[
+            i
+          ] as ChipValues;
           if (values.get(chipValue)) {
             willSteal = true;
           } else {
-            canSteal = true
+            canSteal = true;
           }
         }
       }
-    })
+    });
 
     // Holding some chips and we cant steal
     if (currentPlayersHeldChips.length >= 5 && !willSteal && !canSteal) {
-      shouldPass = true
+      shouldPass = true;
     }
 
     if (willSteal || canSteal) {
-        shouldPass = true
-      }
-  
+      shouldPass = true;
+    }
 
-    return shouldPass
+    return shouldPass;
   }
 }
